@@ -1,0 +1,378 @@
+/* Enhanced global styles for better UX */
+
+/* RTL Notification styles */
+.rtl-notification {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.rtl-notification .ant-notification-notice-message {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.rtl-notification .ant-notification-notice-description {
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+/* RTL Modal styles */
+.rtl-modal {
+  direction: rtl !important;
+}
+
+.rtl-modal .ant-modal-header {
+  text-align: right;
+}
+
+.rtl-modal .ant-modal-body {
+  text-align: right;
+}
+
+.rtl-modal .ant-modal-footer {
+  text-align: left;
+}
+
+/* Loading animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Card animations */
+.ant-card {
+  animation: fadeIn 0.3s ease-out;
+  transition: all 0.3s ease;
+}
+
+.ant-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Table enhancements */
+.ant-table-tbody > tr:hover > td {
+  background-color: rgba(24, 144, 255, 0.08) !important;
+}
+
+.ant-table-thead > tr > th {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+/* Button enhancements */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+  border: none;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #40a9ff, #69c0ff);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.ant-btn-danger {
+  background: linear-gradient(135deg, #ff4d4f, #ff7875);
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+}
+
+.ant-btn-danger:hover {
+  background: linear-gradient(135deg, #ff7875, #ffa39e);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Form enhancements */
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ant-input,
+.ant-input-number,
+.ant-select-selector,
+.ant-picker {
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-select-focused .ant-select-selector,
+.ant-picker:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Tag enhancements */
+.ant-tag {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 2px 8px;
+  margin: 2px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Drawer enhancements */
+.ant-drawer-content {
+  background: linear-gradient(180deg, #001529, #002140);
+}
+
+.ant-drawer-header {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Menu enhancements */
+.ant-menu-dark {
+  background: transparent;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: linear-gradient(90deg, #1890ff, rgba(24, 144, 255, 0.1));
+  border-radius: 8px;
+  margin: 4px 8px;
+  width: calc(100% - 16px);
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin: 4px 8px;
+  width: calc(100% - 16px);
+}
+
+/* Progress bar enhancements */
+.ant-progress-line .ant-progress-bg {
+  background: linear-gradient(90deg, #1890ff, #52c41a);
+  border-radius: 8px;
+}
+
+/* Statistic enhancements */
+.ant-statistic-title {
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+}
+
+.ant-statistic-content {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Timeline enhancements */
+.ant-timeline-item-head {
+  background-color: #1890ff;
+  border: 2px solid #001529;
+}
+
+.ant-timeline-item-content {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Skeleton enhancements */
+.ant-skeleton-content .ant-skeleton-title,
+.ant-skeleton-content .ant-skeleton-paragraph > li {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Status indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-indicator.success {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+  border: 1px solid rgba(82, 196, 26, 0.3);
+}
+
+.status-indicator.warning {
+  background-color: rgba(250, 173, 20, 0.1);
+  color: #faad14;
+  border: 1px solid rgba(250, 173, 20, 0.3);
+}
+
+.status-indicator.error {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+  border: 1px solid rgba(255, 77, 79, 0.3);
+}
+
+.status-indicator.info {
+  background-color: rgba(24, 144, 255, 0.1);
+  color: #1890ff;
+  border: 1px solid rgba(24, 144, 255, 0.3);
+}
+
+/* Priority indicators */
+.priority-high {
+  color: #ff4d4f !important;
+  font-weight: 600;
+}
+
+.priority-medium {
+  color: #faad14 !important;
+  font-weight: 500;
+}
+
+.priority-low {
+  color: #52c41a !important;
+  font-weight: 400;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .ant-table {
+    font-size: 12px;
+  }
+  
+  .ant-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .ant-card-body {
+    padding: 16px;
+  }
+  
+  .ant-statistic-title {
+    font-size: 12px;
+  }
+  
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .ant-drawer,
+  .ant-modal-mask,
+  .ant-modal-wrap,
+  .ant-notification,
+  .ant-message {
+    display: none !important;
+  }
+  
+  .ant-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  .ant-table {
+    color: #000;
+  }
+  
+  .ant-btn {
+    display: none !important;
+  }
+}
+
+/* Accessibility improvements */
+.ant-btn:focus-visible,
+.ant-input:focus-visible,
+.ant-select:focus-visible {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ant-card {
+    border: 2px solid #fff;
+  }
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #fff;
+  }
+  
+  .ant-btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

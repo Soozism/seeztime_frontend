@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  ginga-frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://185.105.187.118:8000/api/v1
+    restart: unless-stopped
+    # Optional: Add volumes for logs if needed
+    # volumes:
+    #   - ./logs:/var/log/nginx 
