@@ -23,6 +23,7 @@ import {
   Statistic,
   Alert,
   message,
+  Select,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -35,6 +36,7 @@ import {
   StopOutlined,
   DeleteOutlined,
   HistoryOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import {
   Task,
@@ -47,6 +49,7 @@ import {
 } from '../types';
 import TaskService from '../services/taskService';
 import TimeLogService from '../services/timeLogService';
+import UserService from '../services/userService';
 import { useAuth } from '../contexts/AuthContext';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -57,6 +60,9 @@ dayjs.locale('fa');
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
+
+// Extend Task type to include subtasks for this page
+type TaskWithSubtasks = Task & { subtasks?: Task[] };
 
 interface TimeTracker {
   isRunning: boolean;
@@ -71,7 +77,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<TaskWithSubtasks | null>(null);
   const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -85,11 +91,25 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
   const [timeLogModalVisible, setTimeLogModalVisible] = useState(false);
   const [editTimeLogModalVisible, setEditTimeLogModalVisible] = useState(false);
   const [selectedTimeLog, setSelectedTimeLog] = useState<TimeLog | null>(null);
+  const [addSubtaskModalVisible, setAddSubtaskModalVisible] = useState(false);
+  const [editSubtaskModalVisible, setEditSubtaskModalVisible] = useState(false);
   
   // Forms
   const [timeLogForm] = Form.useForm();
   const [editTimeLogForm] = Form.useForm();
+  const [addSubtaskForm] = Form.useForm();
+  const [editSubtaskForm] = Form.useForm();
+  const [userOptions, setUserOptions] = useState<{ label: string; value: number }[]>([]);
+  const [editingSubtask, setEditingSubtask] = useState<any>(null);
   
+  useEffect(() => {
+    if (addSubtaskModalVisible) {
+      UserService.getUsers().then(users => {
+        setUserOptions(users.map((u: any) => ({ label: u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username, value: u.id })));
+      });
+    }
+  }, [addSubtaskModalVisible]);
+
   // Refs
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -281,6 +301,65 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
     setEditTimeLogModalVisible(true);
   };
 
+  // Add subtask handler
+  const handleAddSubtask = async (values: any) => {
+    if (!task) return;
+    try {
+      await TaskService.createTask({
+        ...values,
+        status: 'todo',
+        priority: values.priority,
+        story_points: values.story_points || 0,
+        estimated_hours: values.estimated_hours || 0,
+        due_date: values.due_date ? values.due_date.toISOString() : null,
+        is_subtask: true,
+        project_id: task.project_id,
+        sprint_id: task.sprint_id,
+        parent_task_id: task.id,
+      });
+      setAddSubtaskModalVisible(false);
+      addSubtaskForm.resetFields();
+      await fetchTaskDetail(task.id);
+      notification.success({ message: 'زیر وظیفه با موفقیت اضافه شد' });
+    } catch (error) {
+      notification.error({ message: 'خطا', description: 'خطا در افزودن زیر وظیفه' });
+    }
+  };
+
+  // Edit subtask handler
+  const handleEditSubtask = (subtask: any) => {
+    setEditingSubtask(subtask);
+    editSubtaskForm.setFieldsValue({
+      title: subtask.title,
+      description: subtask.description,
+      priority: subtask.priority,
+      story_points: subtask.story_points,
+      estimated_hours: subtask.estimated_hours,
+      due_date: subtask.due_date ? dayjs(subtask.due_date) : null,
+      assignee_id: subtask.assignee_id,
+    });
+    setEditSubtaskModalVisible(true);
+  };
+
+  const handleUpdateSubtask = async (values: any) => {
+    if (!editingSubtask) return;
+    try {
+      await TaskService.updateTask(editingSubtask.id, {
+        ...editingSubtask,
+        ...values,
+        due_date: values.due_date ? values.due_date.toISOString() : null,
+      });
+      setEditSubtaskModalVisible(false);
+      setEditingSubtask(null);
+      if (task) {
+        await fetchTaskDetail(task.id);
+      }
+      notification.success({ message: 'زیر وظیفه با موفقیت ویرایش شد' });
+    } catch (error) {
+      notification.error({ message: 'خطا', description: 'خطا در ویرایش زیر وظیفه' });
+    }
+  };
+
   const getPriorityColor = (priority: TaskPriority) => {
     switch (priority) {
       case TaskPriority.LOW:
@@ -409,6 +488,54 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
     },
   ];
 
+  const subtaskColumns = [
+    {
+      title: 'عنوان',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'وضعیت',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: TaskStatus) => (
+        <Tag color={getStatusColor(status)}>
+          {getStatusText(status)}
+        </Tag>
+      ),
+    },
+    {
+      title: 'اولویت',
+      dataIndex: 'priority',
+      key: 'priority',
+      render: (priority: TaskPriority) => (
+        <Tag color={getPriorityColor(priority)}>
+          {getPriorityText(priority)}
+        </Tag>
+      ),
+    },
+    {
+      title: 'مسئول',
+      dataIndex: 'assignee_name',
+      key: 'assignee_name',
+    },
+    {
+      title: 'ساعت ثبت شده',
+      dataIndex: 'actual_hours',
+      key: 'actual_hours',
+    },
+    {
+      title: 'عملیات',
+      key: 'actions',
+      render: (_: any, record: any) => (
+        <Space>
+          <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+          <Button icon={<InfoCircleOutlined />} size="small" onClick={() => navigate(`/tasks/${record.id}`)}>جزئیات</Button>
+        </Space>
+      ),
+    },
+  ];
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
@@ -491,6 +618,40 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
           </Card>
         </Col>
       </Row>
+
+      {/* Subtasks Box */}
+      {task && !task.is_subtask && !task.parent_task_id && task.subtasks && (
+        <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+          <Col span={24}>
+            <Card title="زیر وظایف"
+              extra={
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => setAddSubtaskModalVisible(true)}>
+                  افزودن زیر وظیفه
+                </Button>
+              }
+            >
+              <Table
+                dataSource={task.subtasks}
+                rowKey="id"
+                pagination={false}
+                columns={[
+                  { title: 'عنوان', dataIndex: 'title', key: 'title' },
+                  { title: 'وضعیت', dataIndex: 'status', key: 'status', render: (status) => (<Tag>{status}</Tag>) },
+                  { title: 'اولویت', dataIndex: 'priority', key: 'priority' },
+                  { title: 'مسئول', dataIndex: 'assignee_name', key: 'assignee_name' },
+                  { title: 'ساعت ثبت شده', dataIndex: 'actual_hours', key: 'actual_hours' },
+                  { title: 'عملیات', key: 'actions', render: (_: any, record: any) => (
+                      <Space>
+                        <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+                        <Button icon={<InfoCircleOutlined />} size="small" onClick={() => navigate(`/tasks/${record.id}`)}>جزئیات</Button>
+                      </Space>
+                    ) },
+                ]}
+              />
+            </Card>
+          </Col>
+        </Row>
+      )}
 
       {/* Time Tracking Card */}
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
@@ -765,6 +926,112 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
               <Button type="primary" htmlType="submit">
                 ذخیره تغییرات
               </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Add Subtask Modal */}
+      <Modal
+        title="افزودن زیر وظیفه"
+        open={addSubtaskModalVisible}
+        onCancel={() => {
+          setAddSubtaskModalVisible(false);
+          addSubtaskForm.resetFields();
+        }}
+        footer={null}
+        bodyStyle={{ paddingBottom: 0 }}
+      >
+        <Form
+          form={addSubtaskForm}
+          layout="vertical"
+          onFinish={handleAddSubtask}
+        >
+          {/* Make sure title is a top-level Form.Item for validation */}
+          <Form.Item name="title" label="عنوان" rules={[{ required: true, message: 'عنوان الزامی است' }]}> 
+            <Input placeholder="عنوان زیر وظیفه" />
+          </Form.Item>
+          <Form.Item name="description" label="توضیحات"> <Input.TextArea rows={2} placeholder="توضیحات..." /> </Form.Item>
+          <Form.Item label="جزئیات" style={{ marginBottom: 0 }}>
+            <Input.Group compact>
+              <Form.Item name="priority" noStyle rules={[{ required: true, message: 'اولویت الزامی است' }]}> 
+                <Select placeholder="اولویت" style={{ width: 120 }}>
+                  <Select.Option value={1}>کم</Select.Option>
+                  <Select.Option value={2}>متوسط</Select.Option>
+                  <Select.Option value={3}>زیاد</Select.Option>
+                  <Select.Option value={4}>فوری</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="story_points" noStyle> <InputNumber min={0} placeholder="امتیاز استوری" style={{ width: 120, marginLeft: 8 }} /> </Form.Item>
+              <Form.Item name="estimated_hours" noStyle> <InputNumber min={0} placeholder="ساعت برآورد" style={{ width: 120, marginLeft: 8 }} /> </Form.Item>
+            </Input.Group>
+          </Form.Item>
+          <Form.Item name="due_date" label="تاریخ سررسید"> <DatePicker style={{ width: '100%' }} /> </Form.Item>
+          <Form.Item name="assignee_id" label="مسئول" rules={[{ required: true, message: 'انتخاب مسئول الزامی است' }]}> 
+            <Select
+              showSearch
+              placeholder="انتخاب مسئول"
+              options={userOptions}
+              optionFilterProp="label"
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+            <Space>
+              <Button onClick={() => { setAddSubtaskModalVisible(false); addSubtaskForm.resetFields(); }}>انصراف</Button>
+              <Button type="primary" htmlType="submit">ثبت</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Subtask Modal */}
+      <Modal
+        title="ویرایش زیر وظیفه"
+        open={editSubtaskModalVisible}
+        onCancel={() => {
+          setEditSubtaskModalVisible(false);
+          setEditingSubtask(null);
+          editSubtaskForm.resetFields();
+        }}
+        footer={null}
+        bodyStyle={{ paddingBottom: 0 }}
+      >
+        <Form
+          form={editSubtaskForm}
+          layout="vertical"
+          onFinish={handleUpdateSubtask}
+        >
+          <Form.Item name="title" label="عنوان" rules={[{ required: true, message: 'عنوان الزامی است' }]}> <Input placeholder="عنوان زیر وظیفه" /> </Form.Item>
+          <Form.Item name="description" label="توضیحات"> <Input.TextArea rows={2} placeholder="توضیحات..." /> </Form.Item>
+          <Form.Item label="جزئیات" style={{ marginBottom: 0 }}>
+            <Input.Group compact>
+              <Form.Item name="priority" noStyle rules={[{ required: true, message: 'اولویت الزامی است' }]}> 
+                <Select placeholder="اولویت" style={{ width: 120 }}>
+                  <Select.Option value={1}>کم</Select.Option>
+                  <Select.Option value={2}>متوسط</Select.Option>
+                  <Select.Option value={3}>زیاد</Select.Option>
+                  <Select.Option value={4}>فوری</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="story_points" noStyle> <InputNumber min={0} placeholder="امتیاز استوری" style={{ width: 120, marginLeft: 8 }} /> </Form.Item>
+              <Form.Item name="estimated_hours" noStyle> <InputNumber min={0} placeholder="ساعت برآورد" style={{ width: 120, marginLeft: 8 }} /> </Form.Item>
+            </Input.Group>
+          </Form.Item>
+          <Form.Item name="due_date" label="تاریخ سررسید"> <DatePicker style={{ width: '100%' }} /> </Form.Item>
+          <Form.Item name="assignee_id" label="مسئول" rules={[{ required: true, message: 'انتخاب مسئول الزامی است' }]}> 
+            <Select
+              showSearch
+              placeholder="انتخاب مسئول"
+              options={userOptions}
+              optionFilterProp="label"
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+            <Space>
+              <Button onClick={() => { setEditSubtaskModalVisible(false); setEditingSubtask(null); editSubtaskForm.resetFields(); }}>انصراف</Button>
+              <Button type="primary" htmlType="submit">ذخیره تغییرات</Button>
             </Space>
           </Form.Item>
         </Form>

@@ -35,6 +35,7 @@ import {
   CheckCircleOutlined,
   TrophyOutlined,
   TeamOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -676,6 +677,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
+          <Button
+            type="link"
+            size="small"
+            icon={<EyeOutlined />}
+            onClick={() => navigate(`/tasks/${record.id}`)}
+          />
           <Button
             type="text"
             size="small"
