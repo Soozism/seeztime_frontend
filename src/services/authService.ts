@@ -127,15 +127,15 @@ class AuthService {
   }
 
   canManageUsers(): boolean {
-    return this.hasRole(['admin']);
+    return this.hasRole(['admin', 'team_leader']);
   }
 
   canManageProjects(): boolean {
-    return this.hasRole(['admin', 'project_manager']);
+    return this.hasRole(['admin', 'project_manager', 'team_leader']);
   }
 
   canManageTeams(): boolean {
-    return this.hasRole(['admin', 'project_manager']);
+    return this.hasRole(['admin', 'project_manager', 'team_leader']);
   }
 
   canCreateTasks(): boolean {

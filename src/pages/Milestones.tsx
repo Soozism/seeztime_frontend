@@ -28,7 +28,7 @@ import {
   ClockCircleOutlined,
   ProjectOutlined,
 } from '@ant-design/icons';
-import { Milestone, MilestoneCreate, MilestoneStatus, Project, Sprint, Phase } from '../types';
+import { Milestone, MilestoneCreate, MilestoneStatus, Project, Sprint, Phase, UserRole } from '../types';
 import MilestoneService from '../services/milestoneService';
 import ProjectService from '../services/projectService';
 import SprintService from '../services/sprintService';
@@ -51,7 +51,7 @@ const Milestones: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<number | undefined>();
   const [form] = Form.useForm();
 
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
   const isDeveloper = user?.role === 'developer';
 
   useEffect(() => {

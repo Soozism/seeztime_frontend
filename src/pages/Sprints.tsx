@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   Table,
   Button,
   Space,
-  Tag,
   Modal,
   Form,
   Input,
@@ -28,7 +27,7 @@ import {
   StopOutlined,
   ProjectOutlined,
 } from '@ant-design/icons';
-import { Sprint, SprintCreate, SprintStatus, Project, Milestone } from '../types';
+import { Sprint, SprintCreate, SprintStatus, Project, Milestone, UserRole } from '../types';
 import SprintService from '../services/sprintService';
 import ProjectService from '../services/projectService';
 import MilestoneService from '../services/milestoneService';
@@ -41,7 +40,7 @@ const { RangePicker } = DatePicker;
 
 const Sprints: React.FC = () => {
   const { user } = useAuth();
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
 
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -56,9 +55,19 @@ const Sprints: React.FC = () => {
     fetchData();
   }, []);
 
+  const fetchSprints = useCallback(async () => {
+    try {
+      const sprintsData = await SprintService.getSprints(selectedProject ? { project_id: selectedProject } : undefined);
+      setSprints(sprintsData);
+    } catch (error) {
+      console.error('Error fetching sprints:', error);
+      message.error('خطا در بارگذاری اسپرینت‌ها');
+    }
+  }, [selectedProject]);
+
   useEffect(() => {
     fetchSprints();
-  }, [selectedProject]);
+  }, [selectedProject, fetchSprints]);
 
   const fetchData = async () => {
     try {
@@ -78,16 +87,6 @@ const Sprints: React.FC = () => {
       message.error('خطا در بارگذاری اطلاعات');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchSprints = async () => {
-    try {
-      const sprintsData = await SprintService.getSprints(selectedProject ? { project_id: selectedProject } : undefined);
-      setSprints(sprintsData);
-    } catch (error) {
-      console.error('Error fetching sprints:', error);
-      message.error('خطا در بارگذاری اسپرینت‌ها');
     }
   };
 
@@ -144,29 +143,6 @@ const Sprints: React.FC = () => {
     }
   };
 
-  const handleStatusChange = async (sprint: Sprint) => {
-    try {
-      if (sprint.status === SprintStatus.ACTIVE) {
-        await SprintService.closeSprint(sprint.id);
-      } else {
-        await SprintService.startSprint(sprint.id);
-      }
-      message.success('وضعیت اسپرینت تغییر یافت');
-      fetchSprints();
-    } catch (error) {
-      console.error('Error updating sprint status:', error);
-      message.error('خطا در تغییر وضعیت اسپرینت');
-    }
-  };
-
-  const getStatusColor = (status: SprintStatus) => {
-    return status === SprintStatus.ACTIVE ? 'green' : 'gray';
-  };
-
-  const getStatusText = (status: SprintStatus) => {
-    return status === SprintStatus.ACTIVE ? 'فعال' : 'بسته شده';
-  };
-
   const calculateProgress = (sprint: Sprint) => {
     if (!sprint.total_story_points || sprint.total_story_points === 0) return 0;
     const completed = sprint.completed_story_points || 0;
@@ -211,10 +187,17 @@ const Sprints: React.FC = () => {
       title: 'وضعیت',
       dataIndex: 'status',
       key: 'status',
-      render: (status: SprintStatus) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
+      render: (status: SprintStatus, record: Sprint) => (
+        <Select
+          value={status}
+          style={{ minWidth: 120 }}
+          onChange={newStatus => SprintService.changeSprintStatus(record.id, newStatus).then(() => { message.success('وضعیت اسپرینت تغییر یافت'); fetchSprints(); }).catch(() => { message.error('خطا در تغییر وضعیت اسپرینت'); })}
+        >
+          <Option value="planned">برنامه‌ریزی شده</Option>
+          <Option value="active">فعال</Option>
+          <Option value="completed">تکمیل شده</Option>
+          <Option value="cancelled">لغو شده</Option>
+        </Select>
       ),
     },
     {
@@ -273,12 +256,6 @@ const Sprints: React.FC = () => {
                 type="text"
                 icon={<EditOutlined />}
                 onClick={() => handleEdit(record)}
-              />
-              <Button
-                type="text"
-                icon={record.status === SprintStatus.ACTIVE ? <StopOutlined /> : <PlayCircleOutlined />}
-                onClick={() => handleStatusChange(record)}
-                title={record.status === SprintStatus.ACTIVE ? 'بستن اسپرینت' : 'فعال کردن اسپرینت'}
               />
               <Popconfirm
                 title="آیا از حذف این اسپرینت اطمینان دارید؟"
@@ -421,11 +398,10 @@ const Sprints: React.FC = () => {
           <Form.Item
             name="description"
             label="توضیحات"
-            rules={[{ required: true, message: 'توضیحات الزامی است' }]}
           >
             <Input.TextArea
               rows={4}
-              placeholder="توضیحات اسپرینت را وارد کنید"
+              placeholder="توضیحات اسپرینت (اختیاری)"
             />
           </Form.Item>
 

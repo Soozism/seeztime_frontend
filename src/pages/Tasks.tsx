@@ -44,6 +44,7 @@ import {
   Project, 
   User, 
   Sprint,
+  UserRole,
 } from '../types';
 import taskService from '../services/taskService';
 import projectService from '../services/projectService';
@@ -86,7 +87,7 @@ interface TaskWithDetails extends Omit<Task, 'actual_hours'> {
 const Tasks: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
   const isDeveloper = user?.role === 'developer';
 
   const [tasks, setTasks] = useState<TaskWithDetails[]>([]);
@@ -111,6 +112,7 @@ const Tasks: React.FC = () => {
   });
 
   const [form] = Form.useForm();
+
 
   // Calculate stats from tasks
   const calculateStats = useCallback((taskList: TaskWithDetails[]) => {
@@ -142,18 +144,33 @@ const Tasks: React.FC = () => {
 
   // Load supporting data
   const loadSupportingData = useCallback(async () => {
+    // Load each resource independently to avoid blocking others on error
     try {
-      const [projectsData, usersData, sprintsData] = await Promise.all([
-        projectService.getProjects(),
-        userService.getUsers(),
-        sprintService.getSprints(),
-      ]);
-
+      const projectsDataRaw = await projectService.getProjects();
+      let projectsData: Project[] = [];
+      if (Array.isArray(projectsDataRaw)) {
+        projectsData = projectsDataRaw;
+      } else if (projectsDataRaw && typeof projectsDataRaw === 'object' && 'results' in projectsDataRaw && Array.isArray((projectsDataRaw as any).results)) {
+        projectsData = (projectsDataRaw as any).results;
+      }
       setProjects(projectsData);
+    } catch (error) {
+      setProjects([]);
+      console.error('Error loading projects:', error);
+    }
+    try {
+      const usersData = await userService.getUsers();
       setUsers(usersData);
+    } catch (error) {
+      setUsers([]);
+      console.error('Error loading users:', error);
+    }
+    try {
+      const sprintsData = await sprintService.getSprints();
       setSprints(sprintsData);
     } catch (error) {
-      console.error('Error loading supporting data:', error);
+      setSprints([]);
+      console.error('Error loading sprints:', error);
     }
   }, []);
 
@@ -176,7 +193,7 @@ const Tasks: React.FC = () => {
       story_points: 0,
       estimated_hours: 0,
       actual_hours: 0,
-      assignee_id: 0,
+      assignee_id: isDeveloper ? user?.id : 0,
       sprint_id: 0,
       is_subtask: false,
       parent_task_id: 0,
@@ -195,6 +212,7 @@ const Tasks: React.FC = () => {
     form.setFieldsValue({
       ...taskForEdit,
       due_date: taskForEdit.due_date ? dayjs(taskForEdit.due_date) : null,
+      assignee_id: isDeveloper ? user?.id : taskForEdit.assignee_id,
     });
     setModalVisible(true);
   };
@@ -221,7 +239,7 @@ const Tasks: React.FC = () => {
           story_points: values.story_points || 0,
           estimated_hours: values.estimated_hours || 0,
           actual_hours: values.actual_hours || 0,
-          assignee_id: values.assignee_id || 0,
+          assignee_id: isDeveloper ? user?.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
           due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
@@ -240,7 +258,7 @@ const Tasks: React.FC = () => {
           due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
           project_id: values.project_id,
-          assignee_id: values.assignee_id || 0,
+          assignee_id: isDeveloper ? user?.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
           parent_task_id: values.parent_task_id || 0,
@@ -473,7 +491,7 @@ const Tasks: React.FC = () => {
               >
                 بروزرسانی
               </Button>
-              {isAdminOrPM && (
+              {(isAdminOrPM || isDeveloper) && (
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
@@ -583,52 +601,52 @@ const Tasks: React.FC = () => {
           <Form.Item
             label="توضیحات"
             name="description"
-            rules={[{ required: true, message: 'لطفاً توضیحات وظیفه را وارد کنید' }]}
-            initialValue=""
           >
             <TextArea
               rows={4}
-              placeholder="توضیحات وظیفه را وارد کنید"
+              placeholder="توضیحات وظیفه (اختیاری)"
             />
           </Form.Item>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="پروژه"
-                name="project_id"
-                rules={[{ required: true, message: 'لطفاً پروژه را انتخاب کنید' }]}
-              >
-                <Select placeholder="انتخاب پروژه">
-                  {projects.map(project => (
-                    <Option key={project.id} value={project.id}>
-                      {project.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="مسئول"
-                name="assignee_id"
-                rules={[{ required: true, message: 'لطفاً مسئول را انتخاب کنید' }]}
-                initialValue={0}
-              >
-                <Select placeholder="انتخاب مسئول">
-                  <Option value={0}>هیچ کس</Option>
-                  {users.map(user => (
-                    <Option key={user.id} value={user.id}>
-                      <Space>
-                        <Avatar size="small" icon={<UserOutlined />} />
-                        {user.first_name} {user.last_name}
-                      </Space>
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item
+            label="پروژه"
+            name="project_id"
+            rules={[{ required: true, message: 'لطفاً پروژه را انتخاب کنید' }]}
+          >
+            <Select placeholder="انتخاب پروژه">
+              {projects.map(project => (
+                <Option key={project.id} value={project.id}>
+                  {project.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        {!isDeveloper && (
+          <Col span={12}>
+            <Form.Item
+              label="مسئول"
+              name="assignee_id"
+              rules={[{ required: true, message: 'لطفاً مسئول را انتخاب کنید' }]}
+              initialValue={0}
+            >
+              <Select placeholder="انتخاب مسئول">
+                <Option value={0}>هیچ کس</Option>
+                {users.map(user => (
+                  <Option key={user.id} value={user.id}>
+                    <Space>
+                      <Avatar size="small" icon={<UserOutlined />} />
+                      {user.first_name} {user.last_name}
+                    </Space>
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        )}
+      </Row>
 
           <Row gutter={16}>
             <Col span={8}>

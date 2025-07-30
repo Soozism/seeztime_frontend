@@ -46,6 +46,7 @@ import {
   TimeLogCreate,
   TimeLogUpdate,
   User,
+  UserRole,
 } from '../types';
 import TaskService from '../services/taskService';
 import TimeLogService from '../services/timeLogService';
@@ -559,7 +560,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
   }
 
   // Role-based logic
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
   const isDeveloper = user?.role === 'developer';
   const isTaskCreator = task?.created_by_username === user?.username;
 

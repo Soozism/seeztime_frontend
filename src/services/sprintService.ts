@@ -27,8 +27,8 @@ class SprintService {
     return ApiService.delete<void>(`/sprints/${id}`);
   }
 
-  async startSprint(id: number): Promise<Sprint> {
-    return ApiService.post<Sprint>(`/sprints/${id}/start`);
+  async changeSprintStatus(id: number, status: 'planned' | 'active' | 'completed' | 'cancelled'): Promise<Sprint> {
+    return ApiService.patch<Sprint>(`/sprints/${id}/status`, { status });
   }
 
   async closeSprint(id: number): Promise<Sprint> {

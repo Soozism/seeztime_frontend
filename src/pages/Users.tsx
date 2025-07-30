@@ -100,17 +100,21 @@ const Users: React.FC = () => {
   const handlePasswordReset = async (values: any) => {
     try {
       if (editingUser) {
-        await UserService.resetPassword(editingUser.id, values.new_password);
+        // Call the new API endpoint for password change
+        await UserService.changePassword({
+          current_password: values.current_password,
+          new_password: values.new_password,
+        });
         message.success('رمز عبور با موفقیت تغییر یافت');
         setPasswordModalVisible(false);
         setEditingUser(null);
         passwordForm.resetFields();
       }
     } catch (error) {
-      console.error('Error resetting password:', error);
+      console.error('Error changing password:', error);
       message.error('خطا در تغییر رمز عبور');
     }
-  };
+  }
 
   const handleEdit = (user: User) => {
     setEditingUser(user);
@@ -502,6 +506,13 @@ const Users: React.FC = () => {
           onFinish={handlePasswordReset}
         >
           <Form.Item
+            name="current_password"
+            label="رمز عبور فعلی"
+            rules={[{ required: true, message: 'رمز عبور فعلی الزامی است' }]}
+          >
+            <Input.Password placeholder="رمز عبور فعلی" />
+          </Form.Item>
+          <Form.Item
             name="new_password"
             label="رمز عبور جدید"
             rules={[
@@ -511,11 +522,10 @@ const Users: React.FC = () => {
           >
             <Input.Password placeholder="رمز عبور جدید" />
           </Form.Item>
-
           <Form.Item
             name="confirm_password"
             label="تکرار رمز عبور"
-            dependencies={['new_password']}
+            dependencies={["new_password"]}
             rules={[
               { required: true, message: 'تکرار رمز عبور الزامی است' },
               ({ getFieldValue }) => ({
@@ -530,7 +540,6 @@ const Users: React.FC = () => {
           >
             <Input.Password placeholder="تکرار رمز عبور جدید" />
           </Form.Item>
-
           <Form.Item style={{ marginBottom: 0, textAlign: 'left' }}>
             <Space>
               <Button onClick={() => setPasswordModalVisible(false)}>

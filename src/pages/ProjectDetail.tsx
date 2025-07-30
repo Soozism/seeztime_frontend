@@ -34,7 +34,6 @@ import {
   ClockCircleOutlined,
   CheckCircleOutlined,
   TrophyOutlined,
-  TeamOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -61,6 +60,7 @@ import {
   MilestoneStatus,
   PhaseStatus,
   User,
+  UserRole,
 } from '../types';
 import ProjectService from '../services/projectService';
 import TaskService from '../services/taskService';
@@ -85,7 +85,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
   const isDeveloper = user?.role === 'developer';
 
   // State management - Updated to use ProjectDetailResponse
@@ -143,32 +143,31 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   }, [id, fetchProjectData]);
 
   // Task management - using project.tasks from API response
-  const handleCreateTask = async (values: any) => {
+  const handleCreateTask = async (values: any, continueMode = false) => {
     if (!project) return;
 
     try {
       if (editingTask) {
         const taskData: TaskUpdate = {
           title: values.title,
-          description: values.description || '',
+          description: values.description ? values.description : '',
           status: values.status || 'todo',
           priority: values.priority || 1,
           story_points: values.story_points || 0,
           estimated_hours: values.estimated_hours || 0,
           actual_hours: values.actual_hours || 0,
-          assignee_id: values.assignee_id || 0,
+          assignee_id: isDeveloper ? user.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
           due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
         };
-        
         await TaskService.updateTask(editingTask.id, taskData);
         message.success('وظیفه با موفقیت به‌روزرسانی شد');
       } else {
         const taskData: TaskCreate = {
           title: values.title,
-          description: values.description || '',
+          description: values.description ? values.description : '',
           status: values.status || 'todo',
           priority: values.priority || 2,
           story_points: values.story_points || 0,
@@ -176,20 +175,21 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
           project_id: project.id,
-          assignee_id: values.assignee_id || 0,
+          assignee_id: isDeveloper ? user.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
           parent_task_id: values.parent_task_id || 0,
         };
-        
         await TaskService.createTask(taskData);
         message.success('وظیفه جدید با موفقیت ایجاد شد');
       }
 
-      setTaskModalVisible(false);
-      setEditingTask(null);
-      taskForm.resetFields();
       fetchProjectData();
+      if (!continueMode) {
+        setTaskModalVisible(false);
+        setEditingTask(null);
+        taskForm.resetFields();
+      }
     } catch (error) {
       console.error('Error creating/updating task:', error);
       message.error('خطا در ایجاد/به‌روزرسانی وظیفه');
@@ -197,14 +197,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   };
 
   // Phase management
-  const handleCreatePhase = async (values: any) => {
+  const handleCreatePhase = async (values: any, continueMode = false) => {
     if (!project) return;
 
     try {
       if (editingPhase) {
         const phaseData: PhaseUpdate = {
           name: values.name,
-          description: values.description,
+          description: values.description ? values.description : '',
           order: values.order || 0,
           status: values.status || 'planned',
           start_date: values.start_date?.toISOString(),
@@ -215,7 +215,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       } else {
         const phaseData: PhaseCreate = {
           name: values.name,
-          description: values.description,
+          description: values.description ? values.description : '',
           project_id: project.id,
           order: values.order || 0,
           status: values.status || 'planned',
@@ -226,10 +226,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
         message.success('فاز جدید با موفقیت ایجاد شد');
       }
 
-      setPhaseModalVisible(false);
-      setEditingPhase(null);
-      phaseForm.resetFields();
       fetchProjectData();
+      if (!continueMode) {
+        setPhaseModalVisible(false);
+        setEditingPhase(null);
+        phaseForm.resetFields();
+      }
     } catch (error) {
       console.error('Error creating/updating phase:', error);
       message.error('خطا در ایجاد/به‌روزرسانی فاز');
@@ -248,14 +250,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   };
 
   // Sprint management - using project.sprints from API response
-  const handleCreateSprint = async (values: any) => {
+  const handleCreateSprint = async (values: any, continueMode = false) => {
     if (!project) return;
 
     try {
       if (editingSprint) {
         const sprintUpdateData: SprintUpdate = {
           name: values.name,
-          description: values.description,
+          description: values.description ? values.description : '',
           estimated_hours: values.estimated_hours || 0,
           start_date: values.start_date.toISOString(),
           end_date: values.end_date.toISOString(),
@@ -266,7 +268,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       } else {
         const sprintCreateData: SprintCreate = {
           name: values.name,
-          description: values.description,
+          description: values.description ? values.description : '',
           estimated_hours: values.estimated_hours || 0,
           project_id: project.id,
           phase_id: values.phase_id || 0,
@@ -278,10 +280,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
         message.success('اسپرینت جدید با موفقیت ایجاد شد');
       }
 
-      setSprintModalVisible(false);
-      setEditingSprint(null);
-      sprintForm.resetFields();
       fetchProjectData();
+      if (!continueMode) {
+        setSprintModalVisible(false);
+        setEditingSprint(null);
+        sprintForm.resetFields();
+      }
     } catch (error) {
       console.error('Error creating/updating sprint:', error);
       message.error('خطا در ایجاد/به‌روزرسانی اسپرینت');
@@ -289,7 +293,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   };
 
   // Milestone management - using project.milestones from API response
-  const handleCreateMilestone = async (values: any) => {
+  const handleCreateMilestone = async (values: any, continueMode = false) => {
     console.log('handleCreateMilestone called with values:', values); // Debug log
     if (!project) return;
 
@@ -302,7 +306,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
 
       const milestoneData: MilestoneCreate = {
         name: values.name,
-        description: values.description || '',
+        description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
         project_id: project.id,
         phase_id: values.phase_id || 0,
@@ -319,10 +323,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
         message.success('نقطه عطف جدید با موفقیت ایجاد شد');
       }
 
-      setMilestoneModalVisible(false);
-      setEditingMilestone(null);
-      milestoneForm.resetFields();
       fetchProjectData();
+      if (!continueMode) {
+        setMilestoneModalVisible(false);
+        setEditingMilestone(null);
+        milestoneForm.resetFields();
+      }
     } catch (error) {
       console.error('Error creating/updating milestone:', error);
       message.error('خطا در ایجاد/به‌روزرسانی نقطه عطف');
@@ -579,49 +585,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   };
 
   // Sprint Time List Card
-  const renderSprintTimeList = () => {
-    if (!project) return null;
-
-    return (
-      <Card title="تخمین زمان اسپرینت‌ها" size="small" style={{ marginTop: '16px' }}>
-        <List
-          itemLayout="horizontal"
-          dataSource={project.sprints}
-          renderItem={(sprint) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={<Avatar style={{ backgroundColor: getStatusColor(sprint.status) }}>{sprint.name.charAt(0)}</Avatar>}
-                title={sprint.name}
-                description={
-                  <Space direction="vertical" size="small">
-                    <Tag color={getStatusColor(sprint.status)}>
-                      {sprint.status === SprintStatus.PLANNED ? 'برنامه‌ریزی شده' :
-                       sprint.status === SprintStatus.ACTIVE ? 'فعال' :
-                       sprint.status === SprintStatus.COMPLETED ? 'تکمیل شده' : sprint.status}
-                    </Tag>
-                    <Text type="secondary">
-                      {sprint.start_date ? dayjs(sprint.start_date).format('YYYY/MM/DD') : 'بدون تاریخ شروع'} - 
-                      {sprint.end_date ? dayjs(sprint.end_date).format('YYYY/MM/DD') : 'بدون تاریخ پایان'}
-                    </Text>
-                  </Space>
-                }
-              />
-              <div>
-                <Space direction="vertical" size="small" align="end">
-                  <Text strong>
-                    <ClockCircleOutlined /> {sprint.estimated_hours ? `${sprint.estimated_hours} ساعت` : 'تعیین نشده'}
-                  </Text>
-                  <Text type="secondary">
-                    {sprint.task_count} وظیفه
-                  </Text>
-                </Space>
-              </div>
-            </List.Item>
-          )}
-        />
-      </Card>
-    );
-  };
+  // ...existing code...
 
   // Table columns updated to use new API task structure
   const taskColumns: ColumnsType<any> = [
@@ -696,7 +660,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               const taskForEdit: Task = {
                 ...record,
                 project_id: project!.id,
-                assignee_id: users.find(u => u.username === record.assignee_username)?.id || 0,
+                assignee_id: users.find(u => u.username === record.assignee_username)?.id ?? null,
                 sprint_id: project!.sprints.find(s => s.name === record.sprint_name)?.id || 0,
                 created_by_id: project!.created_by_id,
                 parent_task_id: 0,
@@ -705,6 +669,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               taskForm.setFieldsValue({
                 ...taskForEdit,
                 due_date: dayjs(record.due_date),
+                assignee_id: isDeveloper ? user.id : taskForEdit.assignee_id,
               });
               setTaskModalVisible(true);
             }}
@@ -728,6 +693,23 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   ];
 
   // Sprint columns updated to use new API sprint structure
+  const handleSprintStatusChange = async (sprintId: number, currentStatus: SprintStatus) => {
+    try {
+      let newStatus: 'planned' | 'active' | 'completed' | 'cancelled';
+      if (currentStatus === SprintStatus.ACTIVE) {
+        newStatus = 'planned';
+      } else {
+        newStatus = 'active';
+      }
+      await SprintService.changeSprintStatus(sprintId, newStatus);
+      message.success('وضعیت اسپرینت تغییر یافت');
+      fetchProjectData();
+    } catch (error) {
+      console.error('Error updating sprint status:', error);
+      message.error('خطا در تغییر وضعیت اسپرینت');
+    }
+  };
+
   const sprintColumns: ColumnsType<any> = [
     {
       title: 'نام',
@@ -738,12 +720,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       title: 'وضعیت',
       dataIndex: 'status',
       key: 'status',
-      render: (status: SprintStatus) => (
-        <Tag color={getStatusColor(status)}>
-          {status === SprintStatus.PLANNED ? 'برنامه‌ریزی شده' :
-           status === SprintStatus.ACTIVE ? 'فعال' :
-           status === SprintStatus.COMPLETED ? 'تکمیل شده' : status}
-        </Tag>
+      render: (status: SprintStatus, record) => (
+        <Select
+          value={status}
+          style={{ minWidth: 120 }}
+          onChange={newStatus => handleSprintStatusChange(record.id, newStatus)}
+        >
+          <Select.Option value="planned">برنامه‌ریزی شده</Select.Option>
+          <Select.Option value="active">فعال</Select.Option>
+          <Select.Option value="completed">تکمیل شده</Select.Option>
+          <Select.Option value="cancelled">لغو شده</Select.Option>
+        </Select>
       ),
     },
     {
@@ -1018,7 +1005,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Card
             title="وظایف پروژه"
             extra={
-              (isAdminOrPM || (isDeveloper && project.created_by_id === user.id)) && (
+              (isAdminOrPM || isDeveloper) && (
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
@@ -1172,9 +1159,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Form.Item 
             name="description" 
             label="توضیحات"
-            rules={[{ required: true, message: 'لطفاً توضیحات وظیفه را وارد کنید' }]}
           >
-            <TextArea rows={4} placeholder="توضیحات وظیفه" />
+            <TextArea rows={4} placeholder="توضیحات وظیفه (اختیاری)" />
           </Form.Item>
 
           <Row gutter={16}>
@@ -1240,23 +1226,25 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           </Row>
 
           <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item 
-                name="assignee_id" 
-                label="مسئول"
-                rules={[{ required: true, message: 'لطفاً مسئول را انتخاب کنید' }]}
-              >
-                <Select placeholder="انتخاب مسئول">
-                  <Select.Option value={0}>هیچ کس</Select.Option>
-                  {users.map(user => (
-                    <Select.Option key={user.id} value={user.id}>
-                      {user.first_name} {user.last_name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            {!isDeveloper && (
+              <Col span={12}>
+                <Form.Item 
+                  name="assignee_id" 
+                  label="مسئول"
+                  rules={[{ required: true, message: 'لطفاً مسئول را انتخاب کنید' }]}
+                >
+                  <Select placeholder="انتخاب مسئول">
+                    <Select.Option value={0}>هیچ کس</Select.Option>
+                    {users.map(user => (
+                      <Select.Option key={user.id} value={user.id}>
+                        {user.first_name} {user.last_name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            )}
+            <Col span={isDeveloper ? 24 : 12}>
               <Form.Item 
                 name="sprint_id" 
                 label="اسپرینت"
@@ -1298,6 +1286,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               <Button type="primary" htmlType="submit">
                 {editingTask ? 'به‌روزرسانی' : 'ایجاد'}
               </Button>
+              <Button
+                type="default"
+                style={{ background: '#52c41a', color: '#fff' }}
+                onClick={() => {
+                  taskForm
+                    .validateFields()
+                    .then((values) => handleCreateTask(values, true));
+                }}
+              >
+                ساخت و ادامه
+              </Button>
             </Space>
           </div>
         </Form>
@@ -1325,7 +1324,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           </Form.Item>
 
           <Form.Item name="description" label="توضیحات">
-            <TextArea rows={4} placeholder="توضیحات اسپرینت" />
+            <TextArea rows={4} placeholder="توضیحات اسپرینت (اختیاری)" />
           </Form.Item>
 
           <Form.Item
@@ -1381,6 +1380,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               <Button type="primary" htmlType="submit">
                 {editingSprint ? 'به‌روزرسانی' : 'ایجاد'}
               </Button>
+              <Button
+                type="default"
+                style={{ background: '#52c41a', color: '#fff' }}
+                onClick={() => {
+                  sprintForm
+                    .validateFields()
+                    .then((values) => handleCreateSprint(values, true));
+                }}
+              >
+                ساخت و ادامه
+              </Button>
             </Space>
           </div>
         </Form>
@@ -1416,7 +1426,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           </Form.Item>
 
           <Form.Item name="description" label="توضیحات">
-            <TextArea rows={4} placeholder="توضیحات نقطه عطف" />
+            <TextArea rows={4} placeholder="توضیحات نقطه عطف (اختیاری)" />
           </Form.Item>
 
           <Form.Item
@@ -1472,6 +1482,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               <Button type="primary" htmlType="submit">
                 {editingMilestone ? 'به‌روزرسانی' : 'ایجاد'}
               </Button>
+              <Button
+                type="default"
+                style={{ background: '#52c41a', color: '#fff' }}
+                onClick={() => {
+                  milestoneForm
+                    .validateFields()
+                    .then((values) => handleCreateMilestone(values, true));
+                }}
+              >
+                ساخت و ادامه
+              </Button>
             </Space>
           </div>
         </Form>
@@ -1499,7 +1520,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           </Form.Item>
 
           <Form.Item name="description" label="توضیحات">
-            <TextArea rows={4} placeholder="توضیحات فاز" />
+            <TextArea rows={4} placeholder="توضیحات فاز (اختیاری)" />
           </Form.Item>
 
           <Row gutter={16}>
@@ -1558,6 +1579,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               </Button>
               <Button type="primary" htmlType="submit">
                 {editingPhase ? 'به‌روزرسانی' : 'ایجاد'}
+              </Button>
+              <Button
+                type="default"
+                style={{ background: '#52c41a', color: '#fff' }}
+                onClick={() => {
+                  phaseForm
+                    .validateFields()
+                    .then((values) => handleCreatePhase(values, true));
+                }}
+              >
+                ساخت و ادامه
               </Button>
             </Space>
           </div>

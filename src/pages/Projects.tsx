@@ -37,7 +37,7 @@ import {
   CheckCircleOutlined,
   CalendarOutlined,
 } from '@ant-design/icons';
-import { ProjectResponse, ProjectCreate, ProjectStatus, User } from '../types';
+import { ProjectResponse, ProjectCreate, ProjectStatus, User, UserRole } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import ProjectService from '../services/projectService';
 
@@ -70,7 +70,7 @@ interface ProjectWithStats extends ProjectResponse {
 const Projects: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
 
   const [projects, setProjects] = useState<ProjectWithStats[]>([]);
   const [users, setUsers] = useState<User[]>([]);

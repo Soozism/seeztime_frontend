@@ -26,7 +26,7 @@ import {
   UserOutlined,
   ProjectOutlined,
 } from '@ant-design/icons';
-import { Team, TeamCreate, User, Project } from '../types';
+import { Team, TeamCreate, User, Project, UserRole } from '../types';
 import TeamService from '../services/teamService';
 import UserService from '../services/userService';
 import ProjectService from '../services/projectService';
@@ -38,7 +38,7 @@ const { Option } = Select;
 
 const Teams: React.FC = () => {
   const { user } = useAuth();
-  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager' || user?.role === UserRole.TEAM_LEADER;
   const isDeveloper = user?.role === 'developer';
 
   const [teams, setTeams] = useState<Team[]>([]);
@@ -132,7 +132,7 @@ const Teams: React.FC = () => {
       description: team.description,
       team_leader_id: team.team_leader?.id,
       member_ids: team.members?.map(member => member.id) || [],
-      project_ids: [], // Cannot get project list from API, only project_count
+      project_ids: team.projects?.map(project => project.id) || [], // Pre-select existing projects
     });
     setModalVisible(true);
   };
