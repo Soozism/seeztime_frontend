@@ -464,25 +464,29 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
       key: 'actions',
       render: (_text: any, record: TimeLog) => (
         <Space>
-          <Button
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => openEditTimeLogModal(record)}
-          />
-          <Button
-            size="small"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              Modal.confirm({
-                title: 'حذف لاگ زمانی',
-                content: 'آیا مطمئن هستید که می‌خواهید این لاگ زمانی را حذف کنید؟',
-                okText: 'حذف',
-                cancelText: 'انصراف',
-                onOk: () => handleDeleteTimeLog(record.id),
-              });
-            }}
-          />
+          {(user?.role === 'admin' || user?.role === 'project_manager') && (
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => openEditTimeLogModal(record)}
+            />
+          )}
+          {(user?.role === 'admin' || user?.role === 'project_manager') && (
+            <Button
+              size="small"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                Modal.confirm({
+                  title: 'حذف لاگ زمانی',
+                  content: 'آیا مطمئن هستید که می‌خواهید این لاگ زمانی را حذف کنید؟',
+                  okText: 'حذف',
+                  cancelText: 'انصراف',
+                  onOk: () => handleDeleteTimeLog(record.id),
+                });
+              }}
+            />
+          )}
         </Space>
       ),
     },
@@ -529,7 +533,9 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
       key: 'actions',
       render: (_: any, record: any) => (
         <Space>
-          <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+          {(user?.role === 'admin' || user?.role === 'project_manager' || (user?.role === 'developer' && record.created_by === user.id)) && (
+            <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+          )}
           <Button icon={<InfoCircleOutlined />} size="small" onClick={() => navigate(`/tasks/${record.id}`)}>جزئیات</Button>
         </Space>
       ),
@@ -552,6 +558,11 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
     );
   }
 
+  // Role-based logic
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
+  const isTaskCreator = task?.created_by_username === user?.username;
+
   return (
     <div style={{ padding: '24px' }}>
       {/* Header */}
@@ -565,13 +576,15 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
               >
                 بازگشت
               </Button>
-              <Button 
-                type="primary" 
-                icon={<EditOutlined />}
-                onClick={() => navigate(`/tasks/${id}/edit`)}
-              >
-                ویرایش وظیفه
-              </Button>
+              {(isAdminOrPM || isTaskCreator) && (
+                <Button 
+                  type="primary" 
+                  icon={<EditOutlined />}
+                  onClick={() => navigate(`/tasks/${id}/edit`)}
+                >
+                  ویرایش وظیفه
+                </Button>
+              )}
             </Space>
             
             <Title level={2}>{task.title}</Title>
@@ -642,7 +655,9 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
                   { title: 'ساعت ثبت شده', dataIndex: 'actual_hours', key: 'actual_hours' },
                   { title: 'عملیات', key: 'actions', render: (_: any, record: any) => (
                       <Space>
-                        <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+                        {(user?.role === 'admin' || user?.role === 'project_manager' || (user?.role === 'developer' && record.created_by === user.id)) && (
+                          <Button icon={<EditOutlined />} size="small" onClick={() => handleEditSubtask(record)} />
+                        )}
                         <Button icon={<InfoCircleOutlined />} size="small" onClick={() => navigate(`/tasks/${record.id}`)}>جزئیات</Button>
                       </Space>
                     ) },

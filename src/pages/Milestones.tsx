@@ -34,11 +34,13 @@ import ProjectService from '../services/projectService';
 import SprintService from '../services/sprintService';
 import PhaseService from '../services/phaseService';
 import dayjs from 'dayjs';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const Milestones: React.FC = () => {
+  const { user } = useAuth();
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [sprints, setSprints] = useState<Sprint[]>([]);
@@ -48,6 +50,9 @@ const Milestones: React.FC = () => {
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
   const [selectedProject, setSelectedProject] = useState<number | undefined>();
   const [form] = Form.useForm();
+
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
 
   useEffect(() => {
     fetchData();
@@ -94,22 +99,20 @@ const Milestones: React.FC = () => {
     try {
       const milestoneData: MilestoneCreate = {
         name: values.name,
-        description: values.description,
+        description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
         due_date: values.due_date.toISOString(),
         project_id: values.project_id,
         phase_id: values.phase_id || 0,
         sprint_id: values.sprint_id,
       };
-
       if (editingMilestone) {
         await MilestoneService.updateMilestone(editingMilestone.id, milestoneData);
         message.success('نقطه عطف با موفقیت به‌روزرسانی شد');
       } else {
         await MilestoneService.createMilestone(milestoneData);
-        message.success('نقطه عطف جدید با موفقیت ایجاد شد');
+        message.success('نقطه عطف با موفقیت ایجاد شد');
       }
-
       setModalVisible(false);
       setEditingMilestone(null);
       form.resetFields();
@@ -198,21 +201,7 @@ const Milestones: React.FC = () => {
       render: (text: string, record: Milestone) => {
         const daysToDeadline = getDaysToDeadline(record.due_date);
         return (
-          <Space>
-            <Avatar 
-              icon={<FlagOutlined />} 
-              style={{ backgroundColor: getProgressColor(daysToDeadline, record.status) }}
-            />
-            <div>
-              <div><strong>{text}</strong></div>
-              <div style={{ fontSize: '12px', color: '#888' }}>
-                {daysToDeadline !== null 
-                  ? (daysToDeadline >= 0 ? `${daysToDeadline} روز باقی‌مانده` : `${Math.abs(daysToDeadline)} روز گذشته`)
-                  : 'بدون تاریخ مقرر'
-                }
-              </div>
-            </div>
-          </Space>
+          <span>{text}</span>
         );
       },
     },
@@ -235,19 +224,7 @@ const Milestones: React.FC = () => {
       ),
     },
     {
-      title: 'اسپرینت',
-      key: 'sprint',
-      render: (record: Milestone) => (
-        record.sprint ? (
-          <Tag color="purple">{record.sprint?.name || 'نامشخص'}</Tag>
-        ) : (
-          <Tag>عمومی</Tag>
-        )
-      ),
-    },
-    {
       title: 'وضعیت',
-      dataIndex: 'status',
       key: 'status',
       render: (status: MilestoneStatus, record: Milestone) => (
         <Select
@@ -293,28 +270,33 @@ const Milestones: React.FC = () => {
       key: 'actions',
       render: (record: Milestone) => (
         <Space>
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          />
-          {record.status !== MilestoneStatus.COMPLETED && (
-            <Button
-              type="text"
-              icon={<CheckCircleOutlined />}
-              onClick={() => handleStatusChange(record, MilestoneStatus.COMPLETED)}
-              title="تکمیل کردن"
-              style={{ color: '#52c41a' }}
-            />
+          {/* Only show edit/delete milestone if isAdminOrPM */}
+          {isAdminOrPM && (
+            <>
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+              />
+              {record.status !== MilestoneStatus.COMPLETED && (
+                <Button
+                  type="text"
+                  icon={<CheckCircleOutlined />}
+                  onClick={() => handleStatusChange(record, MilestoneStatus.COMPLETED)}
+                  title="تکمیل کردن"
+                  style={{ color: '#52c41a' }}
+                />
+              )}
+              <Popconfirm
+                title="آیا از حذف این نقطه عطف اطمینان دارید؟"
+                onConfirm={() => handleDelete(record.id)}
+                okText="بله"
+                cancelText="خیر"
+              >
+                <Button type="text" danger icon={<DeleteOutlined />} />
+              </Popconfirm>
+            </>
           )}
-          <Popconfirm
-            title="آیا از حذف این نقطه عطف اطمینان دارید؟"
-            onConfirm={() => handleDelete(record.id)}
-            okText="بله"
-            cancelText="خیر"
-          >
-            <Button type="text" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
         </Space>
       ),
     },
@@ -355,31 +337,7 @@ const Milestones: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card>
-            <Statistic
-              title="تکمیل شده"
-              value={stats.completedMilestones}
-              prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#3f8600' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="دارای تاخیر"
-              value={stats.overdueMilestones}
-              valueStyle={{ color: '#cf1322' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="نزدیک به موعد"
-              value={stats.upcomingMilestones}
-              prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#faad14' }}
-            />
+            {/* Other statistics here */}
           </Card>
         </Col>
       </Row>
@@ -412,13 +370,16 @@ const Milestones: React.FC = () => {
                 </Option>
               ))}
             </Select>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setModalVisible(true)}
-            >
-              نقطه عطف جدید
-            </Button>
+            {/* Developers should not see create/edit/delete milestone buttons */}
+            {isAdminOrPM && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setModalVisible(true)}
+              >
+                نقطه عطف جدید
+              </Button>
+            )}
           </Space>
         }
       >
@@ -462,7 +423,6 @@ const Milestones: React.FC = () => {
           <Form.Item
             name="description"
             label="توضیحات"
-            rules={[{ required: true, message: 'توضیحات الزامی است' }]}
           >
             <Input.TextArea
               rows={4}

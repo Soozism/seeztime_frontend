@@ -128,12 +128,6 @@ const Login: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-
-        <div className="text-center mt-6">
-          <Text style={{ color: '#8c8c8c', fontSize: '12px' }}>
-            نام کاربری پیش‌فرض: admin | رمز عبور: admin123
-          </Text>
-        </div>
       </Card>
     </div>
   );

@@ -85,7 +85,10 @@ interface TaskWithDetails extends Omit<Task, 'actual_hours'> {
 
 const Tasks: React.FC = () => {
   const navigate = useNavigate();
-  const { user, canManageProjects } = useAuth();
+  const { user } = useAuth();
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
+
   const [tasks, setTasks] = useState<TaskWithDetails[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -212,7 +215,7 @@ const Tasks: React.FC = () => {
       if (editingTask) {
         const taskData: TaskUpdate = {
           title: values.title,
-          description: values.description || '',
+          description: values.description ? values.description : '',
           status: values.status || 'todo',
           priority: values.priority || 1,
           story_points: values.story_points || 0,
@@ -224,13 +227,12 @@ const Tasks: React.FC = () => {
           due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
         };
-        
         await taskService.updateTask(editingTask.id, taskData);
         message.success('وظیفه با موفقیت به‌روزرسانی شد');
       } else {
         const taskData: TaskCreate = {
           title: values.title,
-          description: values.description || '',
+          description: values.description ? values.description : '',
           status: values.status || 'todo',
           priority: values.priority || 2,
           story_points: values.story_points || 0,
@@ -243,11 +245,9 @@ const Tasks: React.FC = () => {
           phase_id: values.phase_id || 0,
           parent_task_id: values.parent_task_id || 0,
         };
-        
         await taskService.createTask(taskData);
         message.success('وظیفه با موفقیت ایجاد شد');
       }
-
       setModalVisible(false);
       fetchTasks();
     } catch (error) {
@@ -358,7 +358,7 @@ const Tasks: React.FC = () => {
                   onClick={() => navigate(`/tasks/${task.id}`)}
                 />
               </Tooltip>,
-              ...(canManageProjects() || task.assignee_id === user?.id ? [
+              ...(isAdminOrPM || (isDeveloper && task.created_by_username === user?.username) ? [
                 <Tooltip title="ویرایش" key="edit">
                   <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(task)} />
                 </Tooltip>,
@@ -473,7 +473,7 @@ const Tasks: React.FC = () => {
               >
                 بروزرسانی
               </Button>
-              {canManageProjects() && (
+              {isAdminOrPM && (
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
@@ -745,3 +745,7 @@ const Tasks: React.FC = () => {
 };
 
 export default Tasks;
+
+// Tasks.tsx
+// Use useAuth() for user info
+// const { user } = useAuth();

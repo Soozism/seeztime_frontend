@@ -31,11 +31,16 @@ import TeamService from '../services/teamService';
 import UserService from '../services/userService';
 import ProjectService from '../services/projectService';
 import teamTaskStatsService, { TeamTaskStats } from '../services/teamTaskStatsService';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const Teams: React.FC = () => {
+  const { user } = useAuth();
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
+
   const [teams, setTeams] = useState<Team[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -340,13 +345,15 @@ const Teams: React.FC = () => {
           </Space>
         }
         extra={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setModalVisible(true)}
-          >
-            تیم جدید
-          </Button>
+          isAdminOrPM && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalVisible(true)}
+            >
+              تیم جدید
+            </Button>
+          )
         }
       >
         {/* Teams Cards Grid */}
@@ -486,3 +493,7 @@ const Teams: React.FC = () => {
 };
 
 export default Teams;
+
+// Teams.tsx
+// Use useAuth() for user info
+// const { user } = useAuth();

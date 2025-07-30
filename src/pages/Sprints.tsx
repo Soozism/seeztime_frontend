@@ -33,12 +33,16 @@ import SprintService from '../services/sprintService';
 import ProjectService from '../services/projectService';
 import MilestoneService from '../services/milestoneService';
 import dayjs from 'dayjs';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Title } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const Sprints: React.FC = () => {
+  const { user } = useAuth();
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -91,7 +95,7 @@ const Sprints: React.FC = () => {
     try {
       const sprintData: SprintCreate = {
         name: values.name,
-        description: values.description,
+        description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
         project_id: values.project_id,
         phase_id: values.phase_id || 0,
@@ -99,7 +103,6 @@ const Sprints: React.FC = () => {
         start_date: values.dateRange[0].toISOString(),
         end_date: values.dateRange[1].toISOString(),
       };
-
       if (editingSprint) {
         await SprintService.updateSprint(editingSprint.id, sprintData);
         message.success('اسپرینت با موفقیت به‌روزرسانی شد');
@@ -107,7 +110,6 @@ const Sprints: React.FC = () => {
         await SprintService.createSprint(sprintData);
         message.success('اسپرینت جدید با موفقیت ایجاد شد');
       }
-
       setModalVisible(false);
       setEditingSprint(null);
       form.resetFields();
@@ -264,25 +266,30 @@ const Sprints: React.FC = () => {
       key: 'actions',
       render: (record: Sprint) => (
         <Space>
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          />
-          <Button
-            type="text"
-            icon={record.status === SprintStatus.ACTIVE ? <StopOutlined /> : <PlayCircleOutlined />}
-            onClick={() => handleStatusChange(record)}
-            title={record.status === SprintStatus.ACTIVE ? 'بستن اسپرینت' : 'فعال کردن اسپرینت'}
-          />
-          <Popconfirm
-            title="آیا از حذف این اسپرینت اطمینان دارید؟"
-            onConfirm={() => handleDelete(record.id)}
-            okText="بله"
-            cancelText="خیر"
-          >
-            <Button type="text" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
+          {/* Only show edit/delete sprint if isAdminOrPM */}
+          {isAdminOrPM ? (
+            <>
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+              />
+              <Button
+                type="text"
+                icon={record.status === SprintStatus.ACTIVE ? <StopOutlined /> : <PlayCircleOutlined />}
+                onClick={() => handleStatusChange(record)}
+                title={record.status === SprintStatus.ACTIVE ? 'بستن اسپرینت' : 'فعال کردن اسپرینت'}
+              />
+              <Popconfirm
+                title="آیا از حذف این اسپرینت اطمینان دارید؟"
+                onConfirm={() => handleDelete(record.id)}
+                okText="بله"
+                cancelText="خیر"
+              >
+                <Button type="text" danger icon={<DeleteOutlined />} />
+              </Popconfirm>
+            </>
+          ) : null}
         </Space>
       ),
     },
@@ -361,13 +368,16 @@ const Sprints: React.FC = () => {
                 </Option>
               ))}
             </Select>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setModalVisible(true)}
-            >
-              اسپرینت جدید
-            </Button>
+            {/* Developers should not see create/edit/delete sprint buttons */}
+            {isAdminOrPM && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setModalVisible(true)}
+              >
+                اسپرینت جدید
+              </Button>
+            )}
           </Space>
         }
       >

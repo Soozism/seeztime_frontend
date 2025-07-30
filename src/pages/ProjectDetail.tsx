@@ -68,6 +68,7 @@ import SprintService from '../services/sprintService';
 import MilestoneService from '../services/milestoneService';
 import PhaseService from '../services/phaseService';
 import userService from '../services/userService';
+import { useAuth } from '../contexts/AuthContext';
 
 const { Option } = Select;
 
@@ -83,6 +84,9 @@ interface ProjectDetailProps {}
 const ProjectDetail: React.FC<ProjectDetailProps> = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
 
   // State management - Updated to use ProjectDetailResponse
   const [project, setProject] = useState<ProjectDetailResponse | null>(null);
@@ -1014,17 +1018,19 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Card
             title="وظایف پروژه"
             extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setEditingTask(null);
-                  taskForm.resetFields();
-                  setTaskModalVisible(true);
-                }}
-              >
-                افزودن وظیفه
-              </Button>
+              (isAdminOrPM || (isDeveloper && project.created_by_id === user.id)) && (
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setEditingTask(null);
+                    taskForm.resetFields();
+                    setTaskModalVisible(true);
+                  }}
+                >
+                  افزودن وظیفه
+                </Button>
+              )
             }
           >
             <Table
@@ -1041,17 +1047,19 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Card
             title="اسپرینت‌های پروژه"
             extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setEditingSprint(null);
-                  sprintForm.resetFields();
-                  setSprintModalVisible(true);
-                }}
-              >
-                افزودن اسپرینت
-              </Button>
+              (isAdminOrPM || (isDeveloper && project.created_by_id === user.id)) && (
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setEditingSprint(null);
+                    sprintForm.resetFields();
+                    setSprintModalVisible(true);
+                  }}
+                >
+                  افزودن اسپرینت
+                </Button>
+              )
             }
           >
             <Table
@@ -1068,17 +1076,19 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Card
             title="فازهای پروژه"
             extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setEditingPhase(null);
-                  phaseForm.resetFields();
-                  setPhaseModalVisible(true);
-                }}
-              >
-                افزودن فاز
-              </Button>
+              (isAdminOrPM || (isDeveloper && project.created_by_id === user.id)) && (
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setEditingPhase(null);
+                    phaseForm.resetFields();
+                    setPhaseModalVisible(true);
+                  }}
+                >
+                  افزودن فاز
+                </Button>
+              )
             }
           >
             <Table
@@ -1095,18 +1105,20 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           <Card
             title="نقاط عطف پروژه"
             extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setEditingMilestone(null);
-                  milestoneForm.resetFields();
-                  console.log('Opening milestone modal for create');
-                  setMilestoneModalVisible(true);
-                }}
-              >
-                افزودن نقطه عطف
-              </Button>
+              (isAdminOrPM || (isDeveloper && project.created_by_id === user.id)) && (
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setEditingMilestone(null);
+                    milestoneForm.resetFields();
+                    console.log('Opening milestone modal for create');
+                    setMilestoneModalVisible(true);
+                  }}
+                >
+                  افزودن نقطه عطف
+                </Button>
+              )
             }
           >
             <Table

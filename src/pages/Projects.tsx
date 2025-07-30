@@ -69,7 +69,9 @@ interface ProjectWithStats extends ProjectResponse {
 
 const Projects: React.FC = () => {
   const navigate = useNavigate();
-  const { canManageProjects } = useAuth();
+  const { user } = useAuth();
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+
   const [projects, setProjects] = useState<ProjectWithStats[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -205,13 +207,12 @@ const Projects: React.FC = () => {
     try {
       const projectData: ProjectCreate = {
         name: values.name,
-        description: values.description,
+        description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
         status: values.status,
         start_date: values.start_date ? values.start_date.toISOString() : null,
         end_date: values.end_date ? values.end_date.toISOString() : null,
       };
-
       if (editingProject) {
         await ProjectService.updateProject(editingProject.id, projectData);
         message.success('پروژه با موفقیت به‌روزرسانی شد');
@@ -316,7 +317,7 @@ const Projects: React.FC = () => {
               onClick={() => navigate(`/projects/${project.id}`)}
             />
           </Tooltip>,
-          ...(canManageProjects() ? [
+          ...(isAdminOrPM ? [
             <Tooltip title="ویرایش">
               <Button
                 type="text"
@@ -439,7 +440,7 @@ const Projects: React.FC = () => {
               >
                 بروزرسانی
               </Button>
-              {canManageProjects() && (
+              {isAdminOrPM && (
                 <Button
                   type="primary"
                   icon={<PlusOutlined />}
@@ -665,3 +666,8 @@ const Projects: React.FC = () => {
 };
 
 export default Projects;
+
+// Projects.tsx
+// Use useAuth() for user info
+// import { useAuth } from '../contexts/AuthContext';
+// const { user } = useAuth();

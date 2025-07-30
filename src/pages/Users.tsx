@@ -35,6 +35,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const Users: React.FC = () => {
+  const { user } = useAuth();
   const { user: currentUser, canManageUsers } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -295,6 +296,9 @@ const Users: React.FC = () => {
     admins: users.filter(user => user.role === UserRole.ADMIN).length,
     developers: users.filter(user => user.role === UserRole.DEVELOPER).length,
   };
+
+  const isAdminOrPM = user?.role === 'admin' || user?.role === 'project_manager';
+  const isDeveloper = user?.role === 'developer';
 
   return (
     <div style={{ padding: '24px' }}>
