@@ -21,7 +21,7 @@ const Login: React.FC = () => {
       await login(values);
       notification.success({
         message: 'ورود با موفقیت انجام شد',
-        description: 'به سیستم مدیریت وظایف گینگا تک خوش آمدید',
+        description: 'به soozello خوش آمدید',
       });
       navigate(from, { replace: true });
     } catch (error: any) {
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
             ورود به سیستم
           </Title>
           <Text style={{ color: '#8c8c8c' }}>
-            سیستم مدیریت وظایف گینگا تک
+            soozello
           </Text>
         </div>
 

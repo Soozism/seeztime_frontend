@@ -192,7 +192,7 @@ const BugReports: React.FC = () => {
           <Avatar icon={<BugOutlined />} style={{ backgroundColor: getSeverityColor(record.severity) }} />
           <div>
             <div><strong>{text}</strong></div>
-            <div style={{ fontSize: '12px', color: '#888' }}>
+            <div style={{ fontSize: '12px', color: '#888', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>
               #{record.id}
             </div>
           </div>

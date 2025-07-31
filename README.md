@@ -1,6 +1,6 @@
 # Ginga Tek Task Management System - Frontend
 
-یک رابط کاربری مدرن و کامل برای سیستم مدیریت وظایف گینگا تک با استفاده از React، TypeScript، Ant Design و پشتیبانی کامل از زبان فارسی (RTL).
+یک رابط کاربری مدرن و کامل برای soozello با استفاده از React، TypeScript، Ant Design و پشتیبانی کامل از زبان فارسی (RTL).
 
 ## ویژگی‌های جدید و بهبودها
 
@@ -139,7 +139,7 @@ src/
    محتوای فایل `.env`:
    ```env
    REACT_APP_API_URL=http://localhost:8000
-   REACT_APP_APP_NAME=سیستم مدیریت وظایف گینگا تک
+   REACT_APP_APP_NAME=soozello
    REACT_APP_VERSION=1.0.0
    ```
 

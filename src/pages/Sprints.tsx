@@ -166,7 +166,7 @@ const Sprints: React.FC = () => {
           <Avatar icon={<CalendarOutlined />} />
           <div>
             <div><strong>{text}</strong></div>
-            <div style={{ fontSize: '12px', color: '#888' }}>
+            <div style={{ fontSize: '12px', color: '#888', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>
               {record.tasks?.length || 0} وظیفه
             </div>
           </div>

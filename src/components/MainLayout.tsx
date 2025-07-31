@@ -193,7 +193,7 @@ const MainLayout: React.FC = () => {
           />
         )}
         <Text style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>
-          سیستم مدیریت وظایف گینگا تک
+          soozello
         </Text>
       </Space>
 

@@ -1,5 +1,9 @@
 /* Enhanced global styles for better UX */
 
+body, html, * {
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif !important;
+}
+
 /* RTL Notification styles */
 .rtl-notification {
   direction: rtl !important;

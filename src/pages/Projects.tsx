@@ -344,14 +344,14 @@ const Projects: React.FC = () => {
       >
         <div style={{ minHeight: '200px' }}>
           <div style={{ marginBottom: '12px' }}>
-            <Text strong style={{ fontSize: '16px' }}>{project.name}</Text>
+            <Text strong style={{ fontSize: '16px', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>{project.name}</Text>
             <div style={{ float: 'right' }}>
               {getStatusTag(project.status)}
             </div>
           </div>
           
           <div style={{ marginBottom: '16px', minHeight: '40px' }}>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" style={{ fontSize: '12px', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>
               {project.description 
                 ? (project.description.length > 80 
                     ? `${project.description.substring(0, 80)}...` 
@@ -368,7 +368,7 @@ const Projects: React.FC = () => {
               strokeColor={getProgressColor(project.progress || 0)}
               format={(percent) => `${percent}%`}
             />
-            <Text type="secondary" style={{ fontSize: '11px' }}>
+            <Text type="secondary" style={{ fontSize: '11px', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>
               {project.done_tasks || 0} از {project.total_tasks || 0} وظیفه
             </Text>
           </div>
@@ -377,13 +377,13 @@ const Projects: React.FC = () => {
             <Col span={12}>
               <div style={{ textAlign: 'center' }}>
                 <ClockCircleOutlined style={{ color: '#fa8c16', marginRight: 4 }} />
-                <Text style={{ fontSize: '12px' }}>{(project.total_spent_hours || 0).toFixed(1)} ساعت</Text>
+                <Text style={{ fontSize: '12px', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>{(project.total_spent_hours || 0).toFixed(1)} ساعت</Text>
               </div>
             </Col>
             <Col span={12}>
               <div style={{ textAlign: 'center' }}>
                 <TeamOutlined style={{ color: '#722ed1', marginRight: 4 }} />
-                <Text style={{ fontSize: '12px' }}>{project.total_tasks || 0} وظیفه</Text>
+                <Text style={{ fontSize: '12px', fontFamily: 'Iranian Sans, IranianSans, Vazir, Arial, sans-serif' }}>{project.total_tasks || 0} وظیفه</Text>
               </div>
             </Col>
           </Row>

@@ -1,15 +1,34 @@
 /* App.css - Main styles for RTL support and dark theme customizations */
 
+/* Universal font enforcement */
+*, *:before, *:after {
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif !important;
+}
+
+/* Ant Design font enforcement */
+.ant-typography,
+.ant-btn,
+.ant-table,
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td,
+.ant-card,
+.ant-modal-title,
+.ant-form-item-label > label,
+.ant-select,
+.ant-select-item,
+.ant-tag {
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif !important;
+}
+
 /* RTL Support */
 html {
   direction: rtl;
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #1f1f1f;
