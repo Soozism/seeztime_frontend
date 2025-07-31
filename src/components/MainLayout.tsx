@@ -158,7 +158,7 @@ const MainLayout: React.FC = () => {
       theme="dark"
       mode="inline"
       selectedKeys={[location.pathname]}
-      style={{ borderRight: 0 }}
+      style={{ borderRight: 0, backgroundColor: '#006D77', color: '#FFFFFF' }}
       items={menuItems.map(item => ({
         ...item,
         onClick: () => handleMenuClick(item.key),
@@ -169,11 +169,13 @@ const MainLayout: React.FC = () => {
   const headerContent = (
     <Header
       style={{
-        padding: '0 16px',
-        background: '#001529',
+        padding: '0 24px',
+        background: '#006D77',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        transition: 'background-color 0.3s ease',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
       }}
     >
       <Space>
@@ -182,23 +184,23 @@ const MainLayout: React.FC = () => {
             type="text"
             icon={<MenuUnfoldOutlined />}
             onClick={() => setMobileDrawerVisible(true)}
-            style={{ color: '#fff' }}
+            style={{ color: '#FFFFFF' }}
           />
         ) : (
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{ color: '#fff' }}
+            style={{ color: '#FFFFFF' }}
           />
         )}
-        <Text style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>
+        <Text style={{ color: '#FFFFFF', fontSize: '20px', fontWeight: 'bold' }}>
           soozello
         </Text>
       </Space>
 
       <Space>
-        <Text style={{ color: '#fff' }}>
+        <Text style={{ color: '#FFFFFF' }}>
           {user?.first_name} {user?.last_name}
         </Text>
         <Dropdown
@@ -209,7 +211,7 @@ const MainLayout: React.FC = () => {
           placement="bottomLeft"
         >
           <Avatar
-            style={{ backgroundColor: '#1890ff', cursor: 'pointer' }}
+            style={{ backgroundColor: '#FF6F61', cursor: 'pointer', transition: 'background-color 0.3s ease' }}
             icon={<UserOutlined />}
           />
         </Dropdown>
@@ -228,10 +230,11 @@ const MainLayout: React.FC = () => {
           open={mobileDrawerVisible}
           bodyStyle={{ padding: 0 }}
           width={280}
+          headerStyle={{ background: '#006D77', color: '#FFFFFF' }}
         >
           {sidebarContent}
         </Drawer>
-        <Content style={{ margin: '24px 16px 0' }}>
+        <Content style={{ margin: '24px 16px 0', background: '#F5F5EB' }}>
           <Outlet />
         </Content>
       </Layout>
@@ -250,6 +253,7 @@ const MainLayout: React.FC = () => {
           right: 0,
           top: 0,
           zIndex: 1000,
+          transition: 'width 0.3s ease',
         }}
         width={280}
         collapsedWidth={80}
@@ -260,14 +264,16 @@ const MainLayout: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            borderBottom: '1px solid #434343',
+            borderBottom: '1px solid #A8B5A2',
             marginBottom: '16px',
+            background: '#006D77',
+            transition: 'background-color 0.3s ease',
           }}
         >
           <Text
             style={{
-              color: '#fff',
-              fontSize: collapsed ? '16px' : '18px',
+              color: '#FFFFFF',
+              fontSize: collapsed ? '16px' : '20px',
               fontWeight: 'bold',
             }}
           >
@@ -277,9 +283,9 @@ const MainLayout: React.FC = () => {
         {sidebarContent}
       </Sider>
       
-      <Layout style={{ marginRight: collapsed ? 80 : 280, transition: 'margin-right 0.2s' }}>
+      <Layout style={{ marginRight: collapsed ? 80 : 280, transition: 'margin-right 0.3s ease', background: '#F5F5EB' }}>
         {headerContent}
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+        <Content style={{ margin: '24px 24px 0', overflow: 'initial', background: '#FFFFFF', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)' }}>
           <Outlet />
         </Content>
       </Layout>

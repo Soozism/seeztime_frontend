@@ -1,4 +1,4 @@
-/* App.css - Main styles for RTL support and dark theme customizations */
+/* App.css - Main styles for RTL support and professional theme customizations */
 
 /* Universal font enforcement */
 *, *:before, *:after {
@@ -31,125 +31,132 @@ body {
   font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #1f1f1f;
-  color: #ffffff;
+  background-color: #F5F5EB;
+  color: #333333;
 }
 
-/* Ant Design Dark Theme Customizations */
+/* Ant Design Professional Theme Customizations */
 .ant-layout {
-  background-color: #1f1f1f !important;
+  background-color: #F5F5EB !important;
 }
 
 .ant-layout-header {
-  background-color: #001529 !important;
+  background-color: #006D77 !important;
+  transition: background-color 0.3s ease;
 }
 
 .ant-layout-sider {
-  background-color: #001529 !important;
+  background-color: #006D77 !important;
+  transition: background-color 0.3s ease;
 }
 
 .ant-menu-dark {
-  background-color: #001529 !important;
+  background-color: #006D77 !important;
 }
 
 .ant-card {
-  background-color: #262626 !important;
-  border: 1px solid #434343 !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #A8B5A2 !important;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .ant-card-head {
-  border-bottom: 1px solid #434343 !important;
+  border-bottom: 1px solid #A8B5A2 !important;
 }
 
 .ant-card-head-title {
-  color: #ffffff !important;
+  color: #333333 !important;
 }
 
 .ant-table {
-  background-color: #262626 !important;
+  background-color: #FFFFFF !important;
 }
 
 .ant-table-thead > tr > th {
-  background-color: #1f1f1f !important;
-  border-bottom: 1px solid #434343 !important;
-  color: #ffffff !important;
+  background-color: #F5F5EB !important;
+  border-bottom: 1px solid #A8B5A2 !important;
+  color: #333333 !important;
 }
 
 .ant-table-tbody > tr > td {
-  border-bottom: 1px solid #434343 !important;
-  color: #ffffff !important;
+  border-bottom: 1px solid #A8B5A2 !important;
+  color: #333333 !important;
 }
 
 .ant-table-tbody > tr:hover > td {
-  background-color: #1f1f1f !important;
+  background-color: #F9F9F3 !important;
+  transition: background-color 0.3s ease;
 }
 
 .ant-form-item-label > label {
-  color: #ffffff !important;
+  color: #333333 !important;
 }
 
 .ant-input {
-  background-color: #262626 !important;
-  border: 1px solid #434343 !important;
-  color: #ffffff !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #A8B5A2 !important;
+  color: #333333 !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ant-input:hover,
 .ant-input:focus {
-  border-color: #1890ff !important;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  border-color: #FF6F61 !important;
+  box-shadow: 0 0 0 2px rgba(255, 111, 97, 0.2) !important;
 }
 
 .ant-select {
-  color: #ffffff !important;
+  color: #333333 !important;
 }
 
 .ant-select-selector {
-  background-color: #262626 !important;
-  border: 1px solid #434343 !important;
-  color: #ffffff !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #A8B5A2 !important;
+  color: #333333 !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ant-select-dropdown {
-  background-color: #262626 !important;
+  background-color: #FFFFFF !important;
 }
 
 .ant-select-item {
-  color: #ffffff !important;
+  color: #333333 !important;
 }
 
 .ant-select-item:hover {
-  background-color: #1f1f1f !important;
+  background-color: #F9F9F3 !important;
+  transition: background-color 0.3s ease;
 }
 
 .ant-modal-content {
-  background-color: #262626 !important;
+  background-color: #FFFFFF !important;
 }
 
 .ant-modal-header {
-  background-color: #262626 !important;
-  border-bottom: 1px solid #434343 !important;
+  background-color: #006D77 !important;
+  border-bottom: 1px solid #A8B5A2 !important;
 }
 
 .ant-modal-title {
-  color: #ffffff !important;
+  color: #FFFFFF !important;
 }
 
 .ant-modal-close-x {
-  color: #ffffff !important;
+  color: #FFFFFF !important;
 }
 
 .ant-drawer-content {
-  background-color: #001529 !important;
+  background-color: #006D77 !important;
 }
 
 .ant-drawer-header {
-  background-color: #001529 !important;
-  border-bottom: 1px solid #434343 !important;
+  background-color: #006D77 !important;
+  border-bottom: 1px solid #A8B5A2 !important;
 }
 
 .ant-drawer-title {
-  color: #ffffff !important;
+  color: #FFFFFF !important;
 }
 
 .ant-notification {
@@ -161,23 +168,24 @@ body {
   font-variant-numeric: lining-nums;
 }
 
-/* Custom Scrollbar for Dark Theme */
+/* Custom Scrollbar for Professional Theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f1f1f;
+  background: #F5F5EB;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #434343;
+  background: #A8B5A2;
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #595959;
+  background: #D4A017;
 }
 
 /* Responsive Design */
@@ -227,64 +235,67 @@ body {
 /* Chart Container Styling */
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 400px;
   width: 100%;
 }
 
 /* Custom Button Styles */
 .ant-btn-primary {
-  background-color: #1890ff !important;
-  border-color: #1890ff !important;
+  background-color: #FF6F61 !important;
+  border-color: #FF6F61 !important;
+  transition: all 0.3s ease;
 }
 
 .ant-btn-primary:hover {
-  background-color: #40a9ff !important;
-  border-color: #40a9ff !important;
+  background-color: #F4514E !important;
+  border-color: #F4514E !important;
 }
 
 /* Kanban Board Styles */
 .kanban-board {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   overflow-x: auto;
-  padding: 16px 0;
+  padding: 24px 0;
   min-height: calc(100vh - 200px);
 }
 
 .kanban-column {
   min-width: 300px;
-  background-color: #262626;
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid #434343;
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #A8B5A2;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .kanban-column-header {
-  font-weight: bold;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #1890ff;
-  color: #ffffff;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #006D77;
+  color: #333333;
 }
 
 .kanban-task {
-  background-color: #1f1f1f;
-  border: 1px solid #434343;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 8px;
+  background-color: #F5F5EB;
+  border: 1px solid #A8B5A2;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .kanban-task:hover {
-  border-color: #1890ff;
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  border-color: #FF6F61;
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+  transform: translateY(-4px);
 }
 
 .kanban-task.dragging {
-  opacity: 0.7;
-  transform: rotate(5deg);
+  opacity: 0.8;
+  transform: rotate(3deg);
 }
 
 /* Loading Spinner */
@@ -297,7 +308,7 @@ body {
 
 /* Error Message Styling */
 .error-message {
-  color: #ff4d4f;
+  color: #EF5350;
   text-align: center;
   padding: 20px;
   font-size: 16px;
@@ -305,7 +316,7 @@ body {
 
 /* Success Message Styling */
 .success-message {
-  color: #52c41a;
+  color: #A5D6A7;
   text-align: center;
   padding: 20px;
   font-size: 16px;
@@ -314,71 +325,71 @@ body {
 /* Form Validation Styles */
 .ant-form-item-has-error .ant-input,
 .ant-form-item-has-error .ant-input:hover {
-  border-color: #ff4d4f !important;
+  border-color: #EF5350 !important;
 }
 
 .ant-form-item-explain-error {
-  color: #ff4d4f;
+  color: #EF5350;
   font-size: 12px;
   margin-top: 4px;
 }
 
-/* Tag Styles for Dark Theme */
+/* Tag Styles for Professional Theme */
 .ant-tag {
-  background-color: #262626 !important;
-  border: 1px solid #434343 !important;
-  color: #ffffff !important;
+  background-color: #F5F5EB !important;
+  border: 1px solid #A8B5A2 !important;
+  color: #333333 !important;
 }
 
 /* Priority Tags */
 .priority-low {
-  background-color: #52c41a !important;
-  border-color: #52c41a !important;
-  color: #ffffff !important;
+  background-color: #A8B5A2 !important;
+  border-color: #A8B5A2 !important;
+  color: #FFFFFF !important;
 }
 
 .priority-medium {
-  background-color: #faad14 !important;
-  border-color: #faad14 !important;
-  color: #ffffff !important;
+  background-color: #D4A017 !important;
+  border-color: #D4A017 !important;
+  color: #FFFFFF !important;
 }
 
 .priority-high {
-  background-color: #fa541c !important;
-  border-color: #fa541c !important;
-  color: #ffffff !important;
+  background-color: #FF6F61 !important;
+  border-color: #FF6F61 !important;
+  color: #FFFFFF !important;
 }
 
 .priority-urgent {
-  background-color: #ff4d4f !important;
-  border-color: #ff4d4f !important;
-  color: #ffffff !important;
+  background-color: #EF5350 !important;
+  border-color: #EF5350 !important;
+  color: #FFFFFF !important;
 }
 
 /* Status Tags */
 .status-todo {
-  background-color: #8c8c8c !important;
-  border-color: #8c8c8c !important;
+  background-color: #E0E0E0 !important;
+  border-color: #E0E0E0 !important;
 }
 
 .status-in-progress {
-  background-color: #1890ff !important;
-  border-color: #1890ff !important;
+  background-color: #BBDEFB !important;
+  border-color: #BBDEFB !important;
 }
 
 .status-in-review {
-  background-color: #722ed1 !important;
-  border-color: #722ed1 !important;
+  background-color: #D1C4E9 !important;
+  border-color: #D1C4E9 !important;
 }
 
 .status-testing {
-  background-color: #faad14 !important;
-  border-color: #faad14 !important;
+  background-color: #FFECB3 !important;
+  border-color: #FFECB3 !important;
 }
 
 .status-done {
-  background-color: #52c41a !important;
-  border-color: #52c41a !important;
+  background-color: #A5D6A7 !important;
+  border-color: #A5D6A7 !important;
 }
 
 /* Utility Classes */

@@ -12,13 +12,12 @@ import '../styles/kanban.css';
 const { Title } = Typography;
 
 const statusColumns: { id: TaskStatus; title: string; color: string; gradient: string; icon: React.ReactNode }[] = [
-  { id: TaskStatus.TODO, title: 'To Do', color: '#bdbdbd', gradient: 'linear-gradient(135deg, #ece9f7 0%, #f5f7fa 100%)', icon: <ProjectOutlined /> },
-  { id: TaskStatus.IN_PROGRESS, title: 'In Progress', color: '#1976d2', gradient: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)', icon: <CalendarOutlined /> },
-  { id: TaskStatus.REVIEW, title: 'Review', color: '#ffb300', gradient: 'linear-gradient(135deg, #fffbe7 0%, #ffe082 100%)', icon: <ExclamationCircleOutlined /> },
-  { id: TaskStatus.DONE, title: 'Done', color: '#43a047', gradient: 'linear-gradient(135deg, #e8f5e9 0%, #b9f6ca 100%)', icon: <UserOutlined /> },
-  { id: TaskStatus.BLOCKED, title: 'Blocked', color: '#d32f2f', gradient: 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)', icon: <ExclamationCircleOutlined /> },
+  { id: TaskStatus.TODO, title: 'To Do', color: '#E0E0E0', gradient: 'linear-gradient(135deg, #F5F5EB 0%, #E6E6E6 100%)', icon: <ProjectOutlined /> },
+  { id: TaskStatus.IN_PROGRESS, title: 'In Progress', color: '#BBDEFB', gradient: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)', icon: <CalendarOutlined /> },
+  { id: TaskStatus.REVIEW, title: 'Review', color: '#FF6F61', gradient: 'linear-gradient(135deg, #FFE0DB 0%, #FF6F61 100%)', icon: <ExclamationCircleOutlined /> },
+  { id: TaskStatus.DONE, title: 'Done', color: '#A5D6A7', gradient: 'linear-gradient(135deg, #E8F5E9 0%, #A5D6A7 100%)', icon: <UserOutlined /> },
+  { id: TaskStatus.BLOCKED, title: 'Blocked', color: '#EF9A9A', gradient: 'linear-gradient(135deg, #FFEBEE 0%, #EF9A9A 100%)', icon: <ExclamationCircleOutlined /> },
 ];
-
 
 const Kanban: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +38,6 @@ const Kanban: React.FC = () => {
         ]);
         setProjects(projects);
         setTasks(tasks);
-        // Fetch backlogs for each project
         const backlogMap: { [projectId: number]: Backlog[] } = {};
         await Promise.all(
           projects.map(async (project) => {
@@ -61,17 +59,13 @@ const Kanban: React.FC = () => {
     fetchData();
   }, []);
 
-  // Group tasks by status for a project
-  // مهم: آرایه مرتب شده را بر اساس id بازگردانید تا ترتیب index همیشه ثابت باشد
   const getTasksByStatus = (projectId: number, status: TaskStatus) =>
     tasks
       .filter((t) => t.project_id === projectId && t.status === status)
       .sort((a, b) => a.id - b.id);
 
-  // Helper to build unique droppableId
   const getDroppableId = (projectId: number, status: TaskStatus) => `${projectId}-${status}`;
 
-  // Drag and drop handler
   const onDragEnd = async (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (!destination) return;
@@ -82,7 +76,6 @@ const Kanban: React.FC = () => {
       return;
     }
     const taskId = parseInt(draggableId);
-    // destination.droppableId is now in the form "projectId-status"
     const [, newStatusStr] = destination.droppableId.split('-');
     const newStatus = newStatusStr as TaskStatus;
     setUpdating(true);
@@ -99,7 +92,6 @@ const Kanban: React.FC = () => {
     }
   };
 
-  // Navigate to task detail
   const handleViewTaskDetail = (taskId: number) => {
     navigate(`/tasks/${taskId}`);
   };
@@ -119,22 +111,21 @@ const Kanban: React.FC = () => {
                   className="kanban-card"
                   title={
                     <div className="kanban-project-title">
-                      <ProjectOutlined style={{ fontSize: 22, color: '#1890ff' }} />
+                      <ProjectOutlined style={{ fontSize: 22, color: '#006D77' }} />
                       <span>{project.name}</span>
                     </div>
                   }
                   extra={
                     <Tooltip title="Project ID">
-                      <Tag color="#434343" style={{ fontWeight: 600, fontSize: 14, borderRadius: 8 }}>#{project.id}</Tag>
+                      <Tag color="#A8B5A2" style={{ fontWeight: 600, fontSize: 14, borderRadius: 8 }}>#{project.id}</Tag>
                     </Tooltip>
                   }
                 >
                   <div className="kanban-columns">
-                    {/* Backlog column */}
                     <div className="kanban-column backlog-column">
                       <div className="kanban-column-header">
                         <span className="kanban-column-title">Backlog</span>
-                        <Tag color="#888" className="kanban-column-count">{(backlogs[project.id] || []).length}</Tag>
+                        <Tag color="#A8B5A2" className="kanban-column-count">{(backlogs[project.id] || []).length}</Tag>
                       </div>
                       {(backlogs[project.id] || []).length === 0 && (
                         <div className="kanban-no-tasks">No backlogs</div>
@@ -145,13 +136,12 @@ const Kanban: React.FC = () => {
                             <span className="kanban-task-title">{backlog.title}</span>
                           </div>
                           <div className="kanban-task-desc">{backlog.description?.slice(0, 80)}</div>
-                          <Button size="small" type="primary" style={{ marginTop: 8 }} onClick={() => setConvertModal({ visible: true, backlog, projectId: project.id })}>
+                          <Button size="small" type="primary" style={{ marginTop: 8, background: '#FF6F61', borderColor: '#FF6F61' }} onClick={() => setConvertModal({ visible: true, backlog, projectId: project.id })}>
                             انتقال به وظایف
                           </Button>
                         </div>
                       ))}
                     </div>
-                    {/* Kanban columns (with drag and drop) */}
                     {statusColumns.map((col) => {
                       const tasksInCol = getTasksByStatus(project.id, col.id);
                       const droppableId = getDroppableId(project.id, col.id);
@@ -162,8 +152,9 @@ const Kanban: React.FC = () => {
                               ref={provided.innerRef}
                               {...provided.droppableProps}
                               className={`kanban-column${snapshot.isDraggingOver ? ' dragging-over' : ''}`}
+                              style={{ background: snapshot.isDraggingOver ? col.gradient : 'none' }}
                             >
-                              <div className="kanban-column-header">
+                              <div className="kanban-column-header" style={{ borderBottomColor: col.color }}>
                                 <span className="kanban-column-icon">{col.icon}</span>
                                 <span className="kanban-column-title">{col.title}</span>
                                 <Tag color={col.color} className="kanban-column-count">{tasksInCol.length}</Tag>
@@ -179,12 +170,13 @@ const Kanban: React.FC = () => {
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
                                       className={`kanban-task${snapshot.isDragging ? ' dragging' : ''}`}
+                                      style={{ background: snapshot.isDragging ? col.gradient : 'none' }}
                                     >
                                       <div className="kanban-task-header">
                                         <span className="kanban-task-title">{task.title}</span>
                                         {task.assignee_name && (
                                           <Tooltip title={task.assignee_name}>
-                                            <Avatar style={{ backgroundColor: '#1890ff', verticalAlign: 'middle', fontWeight: 600 }} size={24}>
+                                            <Avatar style={{ backgroundColor: '#FF6F61', verticalAlign: 'middle', fontWeight: 600 }} size={24}>
                                               {task.assignee_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                             </Avatar>
                                           </Tooltip>
@@ -192,10 +184,9 @@ const Kanban: React.FC = () => {
                                       </div>
                                       <div className="kanban-task-desc">{task.description?.slice(0, 80)}</div>
                                       <div className="kanban-task-tags">
-                                        <Tag color="#7c4dff" className="kanban-task-priority">Priority: {task.priority}</Tag>
-                                        {task.due_date && <Tag color="#d32f2f" className="kanban-task-due"><CalendarOutlined /> {task.due_date}</Tag>}
+                                        <Tag color="#D4A017" className="kanban-task-priority">Priority: {task.priority}</Tag>
+                                        {task.due_date && <Tag color="#EF9A9A" className="kanban-task-due"><CalendarOutlined /> {task.due_date}</Tag>}
                                       </div>
-                                      {/* Task Detail Button */}
                                       <div className="kanban-task-actions">
                                         <Tooltip title="مشاهده جزئیات وظیفه">
                                           <Button
@@ -207,15 +198,14 @@ const Kanban: React.FC = () => {
                                               e.stopPropagation();
                                               handleViewTaskDetail(task.id);
                                             }}
-                                            onMouseDown={(e) => {
-                                              e.stopPropagation();
-                                            }}
+                                            onMouseDown={(e) => e.stopPropagation()}
                                             style={{ 
-                                              color: '#1890ff',
-                                              padding: '4px 8px',
+                                              color: '#006D77',
+                                              padding: '4px 10px',
                                               height: 'auto',
                                               fontSize: '12px',
-                                              borderRadius: '6px'
+                                              borderRadius: '6px',
+                                              transition: 'all 0.3s ease',
                                             }}
                                           >
                                             جزئیات
@@ -239,13 +229,14 @@ const Kanban: React.FC = () => {
           </div>
         </DragDropContext>
       </Spin>
-      {/* Convert Backlog Modal */}
       <Modal
         open={convertModal.visible}
         title="انتقال به وظایف"
         onCancel={() => setConvertModal({ visible: false })}
         footer={null}
         destroyOnClose
+        style={{ top: '20px' }}
+        width={400}
       >
         {convertModal.backlog && (
           <ConvertBacklogForm
@@ -268,7 +259,6 @@ const Kanban: React.FC = () => {
   );
 };
 
-// Form component for converting backlog to task
 const ConvertBacklogForm: React.FC<{
   backlog: Backlog;
   projectId: number;
@@ -312,7 +302,7 @@ const ConvertBacklogForm: React.FC<{
         </Select>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading} block>
+        <Button type="primary" htmlType="submit" loading={loading} block style={{ background: '#FF6F61', borderColor: '#FF6F61', transition: 'all 0.3s ease' }}>
           انتقال
         </Button>
       </Form.Item>

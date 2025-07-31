@@ -10,7 +10,7 @@ import Login from './pages/Login';
 import './App.css';
 import './styles/enhancements.css';
 
-const { darkAlgorithm } = theme;
+const { defaultAlgorithm } = theme;
 
 // Lazy load components for better performance
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
@@ -37,10 +37,15 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <ConfigProvider
         theme={{
-          algorithm: darkAlgorithm,
+          algorithm: defaultAlgorithm,
           token: {
-            colorPrimary: '#1890ff',
-            borderRadius: 8,
+            colorPrimary: '#006D77',
+            colorTextSecondary: '#FF6F61',
+            colorBgBase: '#F5F5EB',
+            colorText: '#333333',
+            borderRadius: 10,
+            colorBorder: '#A8B5A2',
+            colorBgContainer: '#FFFFFF',
           },
         }}
         direction="rtl"
