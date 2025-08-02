@@ -6,8 +6,11 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
+# Copy scripts directory for postinstall
+COPY scripts/ ./scripts/
+
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
