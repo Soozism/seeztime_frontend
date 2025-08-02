@@ -47,33 +47,7 @@ export const convertToPersianNumbers = (text: string | number): string => {
   return text.toString().replace(/\d/g, (digit) => persianDigits[parseInt(digit)]);
 };
 
-export const formatPersianDate = (date: string | Date): string => {
-  try {
-    const dateObj = new Date(date);
-    return dateObj.toLocaleDateString('fa-IR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return '';
-  }
-};
-
-export const formatPersianDateTime = (date: string | Date): string => {
-  try {
-    const dateObj = new Date(date);
-    return dateObj.toLocaleDateString('fa-IR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return '';
-  }
-};
+// Use dateUtils.toPersian and dateUtils.formatWithTime instead of these functions
 
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,

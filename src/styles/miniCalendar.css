@@ -1,0 +1,40 @@
+.mini-jalali-calendar {
+  width: 100%;
+}
+
+/* Event Day dot */
+.mini-calendar-event-day {
+  position: relative;
+}
+.mini-calendar-event-day::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--color-secondary);
+  border-radius: 50%;
+}
+
+/* Holiday background */
+.mini-calendar-holiday {
+  background: rgba(255, 111, 97, 0.15);
+}
+
+.Calendar__day--today {
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+}
+
+.mini-jalali-calendar .Calendar__day {
+  color: var(--color-text);
+} 
+
+.event-dot-default::after{background:var(--color-secondary);} 
+.event-dot-meeting::after{background:#4285f4;} 
+.event-dot-hobby::after{background:#34a853;} 
+.event-dot-work::after{background:#fbbc04;} 
+.event-dot-personal::after{background:#ea4335;} 
+.DatePicker__input{display:none !important;} 

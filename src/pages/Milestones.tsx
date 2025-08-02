@@ -9,7 +9,6 @@ import {
   Form,
   Input,
   Select,
-  DatePicker,
   message,
   Popconfirm,
   Typography,
@@ -35,6 +34,8 @@ import SprintService from '../services/sprintService';
 import PhaseService from '../services/phaseService';
 import dayjs from 'dayjs';
 import { useAuth } from '../contexts/AuthContext';
+import { dateUtils } from '../utils/dateConfig';
+import PersianDateTimePicker from '../components/PersianDateTimePicker';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -101,7 +102,7 @@ const Milestones: React.FC = () => {
         name: values.name,
         description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
-        due_date: values.due_date.toISOString(),
+        due_date: values.due_date || null,
         project_id: values.project_id,
         phase_id: values.phase_id || 0,
         sprint_id: values.sprint_id,
@@ -129,7 +130,7 @@ const Milestones: React.FC = () => {
       name: milestone.name,
       description: milestone.description,
       estimated_hours: milestone.estimated_hours,
-      due_date: dayjs(milestone.due_date),
+      due_date: milestone.due_date,
       project_id: milestone.project_id,
       phase_id: milestone.phase_id,
       sprint_id: milestone.sprint_id,
@@ -179,8 +180,8 @@ const Milestones: React.FC = () => {
 
   const getDaysToDeadline = (dueDate: string | null | undefined) => {
     if (!dueDate) return null;
-    const due = dayjs(dueDate);
-    const now = dayjs();
+    const due = (dayjs as any)(dueDate);
+    const now = (dayjs as any)();
     const diff = due.diff(now, 'day');
     return diff;
   };
@@ -247,7 +248,7 @@ const Milestones: React.FC = () => {
         const isOverdue = daysToDeadline !== null && daysToDeadline < 0 && record.status !== MilestoneStatus.COMPLETED;
         return (
           <div>
-            <div>{dayjs(date).format('YYYY/MM/DD')}</div>
+            <div>{dateUtils.toPersian(date)}</div>
             {isOverdue && (
               <Tag color="red">تاخیر دارد</Tag>
             )}
@@ -501,10 +502,9 @@ const Milestones: React.FC = () => {
             label="تاریخ هدف"
             rules={[{ required: true, message: 'انتخاب تاریخ هدف الزامی است' }]}
           >
-            <DatePicker
+            <PersianDateTimePicker
               style={{ width: '100%' }}
               placeholder="تاریخ هدف را انتخاب کنید"
-              format="YYYY/MM/DD"
             />
           </Form.Item>
 

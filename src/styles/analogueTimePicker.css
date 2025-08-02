@@ -1,0 +1,5 @@
+/* Hide OK and Cancel buttons in analogue-time-picker */
+.atp .mdl-card__actions,
+.atp .mdl-button {
+  display: none !important;
+} 

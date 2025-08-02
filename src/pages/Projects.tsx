@@ -13,7 +13,6 @@ import {
   Form,
   Input,
   Select,
-  DatePicker,
   message,
   Popconfirm,
   Tooltip,
@@ -23,6 +22,8 @@ import {
   Badge,
   Collapse,
 } from 'antd';
+import PersianDatePicker from '../components/PersianDatePicker';
+import { dateUtils } from '../utils/dateConfig';
 import {
   PlusOutlined,
   EditOutlined,
@@ -187,8 +188,8 @@ const Projects: React.FC = () => {
       description: project.description,
       estimated_hours: project.estimated_hours,
       status: project.status,
-      start_date: project.start_date ? dayjs(project.start_date) : null,
-      end_date: project.end_date ? dayjs(project.end_date) : null,
+      start_date: project.start_date ? dateUtils.toPersianDayjs(project.start_date) : null,
+      end_date: project.end_date ? dateUtils.toPersianDayjs(project.end_date) : null,
     });
     setModalVisible(true);
   };
@@ -210,8 +211,8 @@ const Projects: React.FC = () => {
         description: values.description ? values.description : '',
         estimated_hours: values.estimated_hours || 0,
         status: values.status,
-        start_date: values.start_date ? values.start_date.toISOString() : null,
-        end_date: values.end_date ? values.end_date.toISOString() : null,
+        start_date: values.start_date || null,
+        end_date: values.end_date || null,
       };
       if (editingProject) {
         await ProjectService.updateProject(editingProject.id, projectData);
@@ -402,7 +403,7 @@ const Projects: React.FC = () => {
           <div style={{ textAlign: 'center' }}>
             <Text type="secondary" style={{ fontSize: '11px' }}>
               <CalendarOutlined style={{ marginRight: 4 }} />
-              {dayjs(project.created_at).format('YYYY/MM/DD')}
+              {dateUtils.toPersian(project.created_at)}
             </Text>
             <br />
             <Text type="secondary" style={{ fontSize: '11px' }}>
@@ -582,7 +583,7 @@ const Projects: React.FC = () => {
                 label="تاریخ شروع"
                 name="start_date"
               >
-                <DatePicker style={{ width: '100%' }} />
+                <PersianDatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -590,7 +591,7 @@ const Projects: React.FC = () => {
                 label="تاریخ پایان"
                 name="end_date"
               >
-                <DatePicker style={{ width: '100%' }} />
+                <PersianDatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -627,7 +628,7 @@ const Projects: React.FC = () => {
                 <Col span={12}>
                   <p><strong>وضعیت:</strong> {getStatusTag(selectedProject.status)}</p>
                   <p><strong>توضیحات:</strong> {selectedProject.description || 'توضیحی ندارد'}</p>
-                  <p><strong>تاریخ ایجاد:</strong> {dayjs(selectedProject.created_at).format('YYYY/MM/DD')}</p>
+                  <p><strong>تاریخ ایجاد:</strong> {dateUtils.toPersian(selectedProject.created_at)}</p>
                   <p><strong>سازنده:</strong> {selectedProject.created_by_name || selectedProject.created_by_username || 'نامشخص'}</p>
                 </Col>
                 <Col span={12}>

@@ -62,6 +62,7 @@ import TaskService from '../services/taskService';
 import TimeLogService from '../services/timeLogService';
 import TeamService from '../services/teamService';
 import { useAuth } from '../contexts/AuthContext';
+import { dateUtils } from '../utils/dateConfig';
 import dayjs from 'dayjs';
 
 // Register Chart.js components
@@ -206,8 +207,8 @@ const Dashboard: React.FC = () => {
 
     try {
       const dateFilter = filters.dateRange ? {
-        start_date: filters.dateRange[0]?.startOf('day').toISOString(),
-        end_date: filters.dateRange[1]?.endOf('day').toISOString(),
+        start_date: filters.dateRange[0] ? dateUtils.formatForAPI(filters.dateRange[0]) : undefined,
+        end_date: filters.dateRange[1] ? dateUtils.formatForAPI(filters.dateRange[1]) : undefined,
       } : {};
 
       if (user.role === 'admin' || user.role === 'project_manager' || user.role === 'team_leader') {
@@ -254,11 +255,11 @@ const Dashboard: React.FC = () => {
       }
 
       try {
-        const endDate = dayjs();
-        const startDate = endDate.subtract(30, 'day');
+        const endDate = dateUtils.now();
+        const startDate = (dayjs as any)(endDate).subtract(30, 'day');
         const trendsData = await DashboardService.getProductivitySummary({
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString(),
+          start_date: (startDate as any).toISOString(),
+          end_date: (endDate as any).toISOString(),
           ...dateFilter,
         });
         setProductivityTrends(trendsData.daily_summary || []);
@@ -314,8 +315,8 @@ const Dashboard: React.FC = () => {
   const exportDashboardData = async () => {
     try {
       const dateFilter = filters.dateRange ? {
-        start_date: filters.dateRange[0]?.startOf('day').toISOString(),
-        end_date: filters.dateRange[1]?.endOf('day').toISOString(),
+        start_date: filters.dateRange[0] ? dateUtils.formatForAPI(filters.dateRange[0]) : undefined,
+        end_date: filters.dateRange[1] ? dateUtils.formatForAPI(filters.dateRange[1]) : undefined,
       } : {};
 
       await TimeLogService.exportTimeLogs({
@@ -369,7 +370,7 @@ const Dashboard: React.FC = () => {
   const productivityTrendData = useMemo(() => {
     const last7Days = productivityTrends.slice(-7);
     return {
-      labels: last7Days.map(trend => dayjs(trend.date).format('MM/DD')),
+      labels: last7Days.map(trend => dateUtils.toPersian(trend.date)),
       datasets: [
         {
           label: 'وظایف تکمیل شده',
@@ -757,13 +758,13 @@ const Dashboard: React.FC = () => {
                   title: 'تاریخ شروع',
                   dataIndex: 'start_date',
                   key: 'start_date',
-                  render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+                  render: (date: string) => dateUtils.toPersian(date),
                 },
                 {
                   title: 'تاریخ پایان',
                   dataIndex: 'end_date',
                   key: 'end_date',
-                  render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+                  render: (date: string) => dateUtils.toPersian(date),
                 },
                 {
                   title: 'وضعیت',

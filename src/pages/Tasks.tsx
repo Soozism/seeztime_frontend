@@ -11,7 +11,6 @@ import {
   Form,
   Input,
   Select,
-  DatePicker,
   Modal,
   Badge,
   Tooltip,
@@ -53,6 +52,8 @@ import sprintService from '../services/sprintService';
 import { useAuth } from '../contexts/AuthContext';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import PersianDatePicker from '../components/PersianDatePicker';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -121,7 +122,7 @@ const Tasks: React.FC = () => {
     const inProgress = taskList.filter(t => t.status === 'in_progress').length;
     const pending = taskList.filter(t => t.status === 'todo').length;
     const overdue = taskList.filter(t => 
-      t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done'
+      t.due_date && (dayjs as any)(t.due_date).isBefore((dayjs as any)()) && t.status !== 'done'
     ).length;
 
     setStats({ total, completed, inProgress, pending, overdue });
@@ -211,7 +212,7 @@ const Tasks: React.FC = () => {
     setEditingTask(taskForEdit);
     form.setFieldsValue({
       ...taskForEdit,
-      due_date: taskForEdit.due_date ? dayjs(taskForEdit.due_date) : null,
+              due_date: taskForEdit.due_date ? dateUtils.toPersianDayjs(taskForEdit.due_date) : null,
       assignee_id: isDeveloper ? user?.id : taskForEdit.assignee_id,
     });
     setModalVisible(true);
@@ -242,7 +243,7 @@ const Tasks: React.FC = () => {
           assignee_id: isDeveloper ? user?.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
-          due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
+          due_date: values.due_date || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
         };
         await taskService.updateTask(editingTask.id, taskData);
@@ -255,7 +256,7 @@ const Tasks: React.FC = () => {
           priority: values.priority || 2,
           story_points: values.story_points || 0,
           estimated_hours: values.estimated_hours || 0,
-          due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
+          due_date: values.due_date || new Date().toISOString(),
           is_subtask: values.is_subtask || false,
           project_id: values.project_id,
           assignee_id: isDeveloper ? user?.id : (values.assignee_id === 0 ? null : values.assignee_id),
@@ -444,15 +445,15 @@ const Tasks: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
                   <ClockCircleOutlined style={{ color: '#666', fontSize: '13px' }} />
                   {(() => {
-                    const dueDate = dayjs(task.due_date);
-                    const isOverdue = dueDate.isBefore(dayjs(), 'day');
-                    const isDueSoon = dueDate.diff(dayjs(), 'day') <= 3 && !isOverdue;
+                    const dueDate = dateUtils.toPersianDayjs(task.due_date);
+                    const isOverdue = dateUtils.isPast(task.due_date);
+                    const isDueSoon = (dueDate as any).diff((dayjs as any)(), 'day') <= 3 && !isOverdue;
                     return (
                       <Tag 
                         color={isOverdue ? 'red' : isDueSoon ? 'orange' : 'blue'}
                         style={{ fontWeight: 600 }}
                       >
-                        {dueDate.format('YYYY/MM/DD')}
+                        {dateUtils.toPersian(task.due_date)}
                         {isOverdue && <span style={{ marginRight: 4 }}> (عقب‌مانده)</span>}
                       </Tag>
                     );
@@ -737,7 +738,7 @@ const Tasks: React.FC = () => {
                 name="due_date"
                 rules={[{ required: true, message: 'لطفاً تاریخ انجام را انتخاب کنید' }]}
               >
-                <DatePicker style={{ width: '100%' }} />
+                <PersianDatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>

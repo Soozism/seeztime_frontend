@@ -34,6 +34,7 @@ import ReportService from '../services/reportService';
 import ProjectService from '../services/projectService';
 import UserService from '../services/userService';
 import TeamService from '../services/teamService';
+import { dateUtils } from '../utils/dateConfig';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -82,8 +83,8 @@ const Reports: React.FC = () => {
       if (selectedUser) filters.user_id = selectedUser;
       if (selectedTeam) filters.team_id = selectedTeam;
       if (dateRange) {
-        filters.start_date = dateRange[0].toISOString();
-        filters.end_date = dateRange[1].toISOString();
+        filters.start_date = (dateRange[0] as any).toISOString();
+        filters.end_date = (dateRange[1] as any).toISOString();
       }
 
       const report = await ReportService.getTimeReport(filters);
@@ -101,8 +102,8 @@ const Reports: React.FC = () => {
       const filters: any = {};
       if (selectedProject) filters.project_id = selectedProject;
       if (dateRange) {
-        filters.start_date = dateRange[0].toISOString();
-        filters.end_date = dateRange[1].toISOString();
+        filters.start_date = (dateRange[0] as any).toISOString();
+        filters.end_date = (dateRange[1] as any).toISOString();
       }
 
       const report = await ReportService.getStoryPointsReport(filters);
@@ -120,8 +121,8 @@ const Reports: React.FC = () => {
       const filters: any = {};
       if (selectedTeam) filters.team_id = selectedTeam;
       if (dateRange) {
-        filters.start_date = dateRange[0].toISOString();
-        filters.end_date = dateRange[1].toISOString();
+        filters.start_date = (dateRange[0] as any).toISOString();
+        filters.end_date = (dateRange[1] as any).toISOString();
       }
 
       const report = await ReportService.getTeamReport(filters);
@@ -140,8 +141,8 @@ const Reports: React.FC = () => {
       if (selectedUser) filters.user_id = selectedUser;
       if (selectedTeam) filters.team_id = selectedTeam;
       if (dateRange) {
-        filters.start_date = dateRange[0].toISOString();
-        filters.end_date = dateRange[1].toISOString();
+        filters.start_date = (dateRange[0] as any).toISOString();
+        filters.end_date = (dateRange[1] as any).toISOString();
       }
 
       // await ReportService.exportReport(reportType, filters, 'pdf');

@@ -69,11 +69,12 @@ import MilestoneService from '../services/milestoneService';
 import PhaseService from '../services/phaseService';
 import userService from '../services/userService';
 import { useAuth } from '../contexts/AuthContext';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Option } = Select;
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+(dayjs as any).extend(utc);
+(dayjs as any).extend(timezone);
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -159,7 +160,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           assignee_id: isDeveloper ? user.id : (values.assignee_id === 0 ? null : values.assignee_id),
           sprint_id: values.sprint_id || 0,
           phase_id: values.phase_id || 0,
-          due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
+          due_date: (dayjs as any)(values.due_date).toISOString(),
           is_subtask: values.is_subtask || false,
         };
         await TaskService.updateTask(editingTask.id, taskData);
@@ -172,7 +173,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           priority: values.priority || 2,
           story_points: values.story_points || 0,
           estimated_hours: values.estimated_hours || 0,
-          due_date: values.due_date?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') || new Date().toISOString(),
+          due_date: (dayjs as any)(values.due_date).toISOString(),
           is_subtask: values.is_subtask || false,
           project_id: project.id,
           assignee_id: isDeveloper ? user.id : (values.assignee_id === 0 ? null : values.assignee_id),
@@ -207,8 +208,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           description: values.description ? values.description : '',
           order: values.order || 0,
           status: values.status || 'planned',
-          start_date: values.start_date?.toISOString(),
-          end_date: values.end_date?.toISOString(),
+          start_date: (dayjs as any)(values.start_date).toISOString(),
+          end_date: (dayjs as any)(values.end_date).toISOString(),
         };
         await PhaseService.updatePhase(editingPhase.id, phaseData);
         message.success('فاز با موفقیت به‌روزرسانی شد');
@@ -219,8 +220,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           project_id: project.id,
           order: values.order || 0,
           status: values.status || 'planned',
-          start_date: values.start_date?.toISOString(),
-          end_date: values.end_date?.toISOString(),
+          start_date: (dayjs as any)(values.start_date).toISOString(),
+          end_date: (dayjs as any)(values.end_date).toISOString(),
         };
         await PhaseService.createPhase(phaseData);
         message.success('فاز جدید با موفقیت ایجاد شد');
@@ -259,8 +260,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           name: values.name,
           description: values.description ? values.description : '',
           estimated_hours: values.estimated_hours || 0,
-          start_date: values.start_date.toISOString(),
-          end_date: values.end_date.toISOString(),
+          start_date: (dayjs as any)(values.start_date).toISOString(),
+          end_date: (dayjs as any)(values.end_date).toISOString(),
           milestone_id: values.milestone_id || null,
         };
         await SprintService.updateSprint(editingSprint.id, sprintUpdateData);
@@ -273,8 +274,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
           project_id: project.id,
           phase_id: values.phase_id || 0,
           milestone_id: values.milestone_id || null,
-          start_date: values.start_date.toISOString(),
-          end_date: values.end_date.toISOString(),
+          start_date: (dayjs as any)(values.start_date).toISOString(),
+          end_date: (dayjs as any)(values.end_date).toISOString(),
         };
         await SprintService.createSprint(sprintCreateData);
         message.success('اسپرینت جدید با موفقیت ایجاد شد');
@@ -310,7 +311,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
         estimated_hours: values.estimated_hours || 0,
         project_id: project.id,
         phase_id: values.phase_id || 0,
-        due_date: values.due_date.toISOString(),
+        due_date: (dayjs as any)(values.due_date).toISOString(),
       };
 
       console.log('Milestone data to send:', milestoneData); // Debug log
@@ -560,8 +561,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
                          sprint.status === SprintStatus.COMPLETED ? 'تکمیل شده' : sprint.status}
                       </Tag>
                       <Text type="secondary">
-                        {sprint.start_date ? dayjs(sprint.start_date).format('YYYY/MM/DD') : 'بدون تاریخ شروع'} - 
-                        {sprint.end_date ? dayjs(sprint.end_date).format('YYYY/MM/DD') : 'بدون تاریخ پایان'}
+                        {sprint.start_date ? dateUtils.toPersian(sprint.start_date) : 'بدون تاریخ شروع'} - 
+                        {sprint.end_date ? dateUtils.toPersian(sprint.end_date) : 'بدون تاریخ پایان'}
                       </Text>
                     </Space>
                   }
@@ -668,7 +669,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
               setEditingTask(taskForEdit);
               taskForm.setFieldsValue({
                 ...taskForEdit,
-                due_date: dayjs(record.due_date),
+                due_date: (dayjs as any)(record.due_date),
                 assignee_id: isDeveloper ? user.id : taskForEdit.assignee_id,
               });
               setTaskModalVisible(true);
@@ -743,13 +744,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       title: 'تاریخ شروع',
       dataIndex: 'start_date',
       key: 'start_date',
-      render: (date: string) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده',
+      render: (date: string) => date ? dateUtils.toPersian(date) : 'تعیین نشده',
     },
     {
       title: 'تاریخ پایان',
       dataIndex: 'end_date',
       key: 'end_date',
-      render: (date: string) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده',
+      render: (date: string) => date ? dateUtils.toPersian(date) : 'تعیین نشده',
     },
     {
       title: 'تعداد وظایف',
@@ -780,8 +781,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
                 ...sprintForEdit,
                 estimated_hours: record.estimated_hours,
                 milestone_id: record.milestone_id,
-                start_date: record.start_date ? dayjs(record.start_date) : null,
-                end_date: record.end_date ? dayjs(record.end_date) : null,
+                start_date: record.start_date ? (dayjs as any)(record.start_date) : null,
+                end_date: record.end_date ? (dayjs as any)(record.end_date) : null,
               });
               setSprintModalVisible(true);
             }}
@@ -824,7 +825,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       title: 'تاریخ تحویل',
       dataIndex: 'due_date',
       key: 'due_date',
-      render: (date: string) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده',
+      render: (date: string) => date ? dateUtils.toPersian(date) : 'تعیین نشده',
     },
     {
       title: 'تعداد اسپرینت‌ها',
@@ -857,7 +858,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
                 ...milestoneForEdit,
                 estimated_hours: record.estimated_hours,
                 phase_id: record.phase_id,
-                due_date: record.due_date ? dayjs(record.due_date) : null,
+                due_date: record.due_date ? (dayjs as any)(record.due_date) : null,
               });
               console.log('Form fields set for edit');
               setMilestoneModalVisible(true);
@@ -914,13 +915,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
       title: 'تاریخ شروع',
       dataIndex: 'start_date',
       key: 'start_date',
-      render: (date: string) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده',
+      render: (date: string) => date ? dateUtils.toPersian(date) : 'تعیین نشده',
     },
     {
       title: 'تاریخ پایان',
       dataIndex: 'end_date',
       key: 'end_date',
-      render: (date: string) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده',
+      render: (date: string) => date ? dateUtils.toPersian(date) : 'تعیین نشده',
     },
     {
       title: 'عملیات',
@@ -937,8 +938,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = () => {
                 description: record.description,
                 order: record.order,
                 status: record.status,
-                start_date: record.start_date ? dayjs(record.start_date) : null,
-                end_date: record.end_date ? dayjs(record.end_date) : null,
+                start_date: record.start_date ? (dayjs as any)(record.start_date) : null,
+                end_date: record.end_date ? (dayjs as any)(record.end_date) : null,
               });
               setPhaseModalVisible(true);
             }}

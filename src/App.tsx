@@ -7,6 +7,8 @@ import MainLayout from './components/MainLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PageLoading } from './components/Loading';
 import Login from './pages/Login';
+
+import { persianLocale } from './utils/dateConfig';
 import './App.css';
 import './styles/enhancements.css';
 
@@ -27,6 +29,11 @@ const BugReports = React.lazy(() => import('./pages/BugReports'));
 const TimeLogs = React.lazy(() => import('./pages/TimeLogs'));
 const Milestones = React.lazy(() => import('./pages/Milestones'));
 const Reports = React.lazy(() => import('./pages/Reports'));
+const Planner = React.lazy(() => import('./pages/Planner'));
+const WorkingHoursManagement = React.lazy(() => import('./pages/WorkingHoursManagement'));
+const Holidays = React.lazy(() => import('./pages/Holidays'));
+const TimeOffRequests = React.lazy(() => import('./pages/TimeOffRequests'));
+const PersonalCalendar = React.lazy(() => import('./pages/PersonalCalendar'));
 const LoginDebug = React.lazy(() => import('./pages/LoginDebug'));
 
 // Loading component
@@ -49,6 +56,7 @@ const App: React.FC = () => {
           },
         }}
         direction="rtl"
+        locale={persianLocale}
       >
         <AuthProvider>
           <Router>
@@ -160,6 +168,42 @@ const App: React.FC = () => {
                 } 
               />
               <Route 
+                path="working-hours" 
+                element={
+                  <ProtectedRoute requiredRoles={["admin","project_manager"]}>
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <WorkingHoursManagement />
+                    </Suspense>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route
+                path="holidays"
+                element={
+                  <ProtectedRoute requiredRoles={["admin","project_manager"]}>
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <Holidays />
+                    </Suspense>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="time-off"
+                element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <TimeOffRequests />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="my-calendar"
+                element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <PersonalCalendar />
+                  </Suspense>
+                }
+              />
+              <Route 
                 path="milestones" 
                 element={
                   <Suspense fallback={<LoadingSpinner />}>
@@ -172,6 +216,14 @@ const App: React.FC = () => {
                 element={
                   <Suspense fallback={<LoadingSpinner />}>
                     <Reports />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="planner" 
+                element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Planner />
                   </Suspense>
                 } 
               />

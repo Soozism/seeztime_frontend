@@ -13,7 +13,6 @@ import {
   Form,
   Input,
   InputNumber,
-  DatePicker,
   Tabs,
   Descriptions,
   Avatar,
@@ -36,9 +35,10 @@ import { Task, TaskStatus, TaskPriority, TimeLog, TimeLogCreate, Comment as Task
 import TaskService from '../services/taskService';
 import { useAuth } from '../contexts/AuthContext';
 import dayjs from 'dayjs';
-import 'dayjs/locale/fa';
+import { dateUtils } from '../utils/dateConfig';
+import PersianDateTimePicker from '../components/PersianDateTimePicker';
 
-dayjs.locale('fa');
+(dayjs as any).locale('fa');
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -228,7 +228,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
       title: 'تاریخ',
       dataIndex: 'date',
       key: 'date',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+      render: (date: string) => dateUtils.toPersian(date),
     },
     {
       title: 'کاربر',
@@ -256,7 +256,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
       title: 'تاریخ ثبت',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD HH:mm'),
+      render: (date: string) => dateUtils.formatWithTime(date),
     },
   ];
 
@@ -436,7 +436,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
                               {comment.content}
                             </div>
                             <Text type="secondary" style={{ fontSize: '12px' }}>
-                              {dayjs(comment.created_at).format('YYYY/MM/DD HH:mm')}
+                              {dateUtils.formatWithTime(comment.created_at)}
                             </Text>
                           </div>
                         }
@@ -465,7 +465,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
                     <Text strong>ایجاد وظیفه</Text>
                     <br />
                     <Text type="secondary">
-                      {dayjs(task.created_at).format('YYYY/MM/DD HH:mm')}
+                      {dateUtils.formatWithTime(task.created_at)}
                     </Text>
                   </Timeline.Item>
                   {task.updated_at && task.updated_at !== task.created_at && (
@@ -473,7 +473,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
                       <Text strong>آخرین بروزرسانی</Text>
                       <br />
                       <Text type="secondary">
-                        {dayjs(task.updated_at).format('YYYY/MM/DD HH:mm')}
+                        {dateUtils.formatWithTime(task.updated_at)}
                       </Text>
                     </Timeline.Item>
                   )}
@@ -500,7 +500,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
           layout="vertical"
           onFinish={handleAddTimeLog}
           initialValues={{
-            date: dayjs(),
+            date: (dayjs as any)(),
           }}
         >
           <Form.Item
@@ -524,7 +524,7 @@ const TaskDetail: React.FC<TaskDetailProps> = () => {
             name="date"
             rules={[{ required: true, message: 'لطفاً تاریخ را انتخاب کنید' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <PersianDateTimePicker style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item

@@ -1020,3 +1020,170 @@ export enum PhaseStatus {
   COMPLETED = 'completed',
   ON_HOLD = 'on_hold'
 }
+
+// Planner Types
+export interface PlannerEvent {
+  id: number;
+  title: string;
+  description?: string | null;
+  start_time: string;
+  end_time: string;
+  location?: string | null;
+  event_type?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface PlannerEventCreate {
+  title: string;
+  description?: string | null;
+  start_time: string;
+  end_time: string;
+  location?: string | null;
+  event_type?: string | null;
+}
+
+export interface PlannerEventUpdate {
+  title?: string | null;
+  description?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  location?: string | null;
+  event_type?: string | null;
+}
+
+export interface PlannerTodo {
+  id: number;
+  title: string;
+  description?: string | null;
+  due_date?: string | null;
+  is_completed: boolean;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface PlannerTodoCreate {
+  title: string;
+  description?: string | null;
+  due_date?: string | null;
+  is_completed?: boolean;
+}
+
+export interface PlannerTodoUpdate {
+  title?: string | null;
+  description?: string | null;
+  due_date?: string | null;
+  is_completed?: boolean;
+}
+
+export enum CalendarView {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month'
+}
+
+export interface CalendarEvent extends PlannerEvent {
+  start: Date;
+  end: Date;
+  allDay?: boolean;
+  resource?: any;
+}
+
+export interface TodoFilters {
+  is_completed?: boolean;
+  due_date?: string;
+}
+
+export interface EventFilters {
+  event_type?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+// WORKING_HOURS_TYPES_START
+export interface WorkingHoursCreate {
+  user_id: number;
+  start_time: string; // HH:MM:SS
+  end_time: string;   // HH:MM:SS
+  work_hours_per_day?: number;
+  monday_enabled?: boolean;
+  tuesday_enabled?: boolean;
+  wednesday_enabled?: boolean;
+  thursday_enabled?: boolean;
+  friday_enabled?: boolean;
+  saturday_enabled?: boolean;
+  sunday_enabled?: boolean;
+  break_start_time?: string | null; // HH:MM:SS
+  break_end_time?: string | null;   // HH:MM:SS
+  break_duration_minutes?: number;
+  timezone?: string;
+  effective_from: string; // YYYY-MM-DD
+  effective_to?: string | null;     // YYYY-MM-DD
+  notes?: string | null;
+}
+
+export interface WorkingHoursUpdate extends Partial<WorkingHoursCreate> {}
+
+export interface WorkingHoursResponse extends WorkingHoursCreate {
+  id: number;
+  set_by_id?: number;
+  created_at: string;
+  updated_at?: string | null;
+  user_name?: string;
+  user_full_name?: string;
+  set_by_name?: string;
+}
+
+export interface WorkDayStatus {
+  date: string; // YYYY-MM-DD
+  is_working_day: boolean;
+  is_holiday: boolean;
+  is_time_off: boolean;
+  holiday_name?: string | null;
+  time_off_id?: number | null;
+}
+// WORKING_HOURS_TYPES_END
+
+// HOLIDAY_TIMEOFF_TYPES_START
+export interface HolidayCreate {
+  name: string;
+  date: string; // YYYY-MM-DD
+  calendar_type?: 'national' | 'religious' | 'weekly' | 'company';
+  is_national?: boolean;
+  is_recurring?: boolean;
+  jalali_year?: number | null;
+  jalali_month?: number | null;
+  jalali_day?: number | null;
+  description?: string | null;
+}
+
+export interface HolidayResponse extends HolidayCreate {
+  id: number;
+  created_by_id?: number;
+  created_at: string;
+  updated_at?: string | null;
+  created_by_name?: string | null;
+}
+
+export interface TimeOffCreate {
+  start_date: string; // YYYY-MM-DD
+  end_date: string;   // YYYY-MM-DD
+  reason?: string | null;
+  user_id?: number; // admin/PM can specify
+}
+
+export interface TimeOffUpdate extends Partial<TimeOffCreate> {}
+
+export interface TimeOffResponse extends TimeOffCreate {
+  id: number;
+  status: 'pending' | 'approved' | 'rejected';
+  approved_by_id?: number | null;
+  approved_at?: string | null;
+  approval_notes?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+  user_name?: string | null;
+  approved_by_name?: string | null;
+  days_count?: number;
+}
+// HOLIDAY_TIMEOFF_TYPES_END

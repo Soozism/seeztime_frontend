@@ -29,6 +29,7 @@ import projectService from '../services/projectService';
 import teamService from '../services/teamService';
 import userService from '../services/userService';
 import NotificationService from '../utils/notifications';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -120,8 +121,8 @@ const AdvancedReports: React.FC = () => {
   };
 
   const getFilterParams = () => ({
-    start_date: dateRange?.[0]?.format('YYYY-MM-DD'),
-    end_date: dateRange?.[1]?.format('YYYY-MM-DD'),
+    start_date: dateRange?.[0] ? dateUtils.formatForAPI(dateRange[0]) : undefined,
+    end_date: dateRange?.[1] ? dateUtils.formatForAPI(dateRange[1]) : undefined,
     project_id: selectedProject,
     team_id: selectedTeam,
     user_id: selectedUser
@@ -192,7 +193,7 @@ const AdvancedReports: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${type}-report-${dayjs().format('YYYY-MM-DD')}.csv`;
+      link.download = `${type}-report-${dateUtils.toPersian(dateUtils.now())}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

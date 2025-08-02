@@ -33,6 +33,7 @@ import projectService from '../services/projectService';
 import NotificationService from '../utils/notifications';
 import { useAuth } from '../contexts/AuthContext';
 import { Project as ProjectType, VersionResponse } from '../types';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -100,7 +101,7 @@ const VersionManagement: React.FC = () => {
     form.setFieldsValue({
       version_number: version.version_number,
       description: version.description,
-      release_date: version.release_date ? dayjs(version.release_date) : null
+      release_date: version.release_date ? dateUtils.toPersianDayjs(version.release_date) : null
     });
   };
 
@@ -114,7 +115,7 @@ const VersionManagement: React.FC = () => {
       const data = {
         version_number: values.version_number,
         description: values.description,
-        release_date: values.release_date?.format('YYYY-MM-DD') || null,
+        release_date: values.release_date && typeof values.release_date.format === 'function' ? values.release_date.format('YYYY-MM-DD') : values.release_date || null,
         project_id: selectedProject
       };
 
@@ -177,7 +178,7 @@ const VersionManagement: React.FC = () => {
       title: 'تاریخ انتشار',
       dataIndex: 'release_date',
       key: 'release_date',
-      render: (date: string | null) => date ? dayjs(date).format('YYYY/MM/DD') : 'تعیین نشده'
+      render: (date: string | null) => date ? dateUtils.toPersian(date) : 'تعیین نشده'
     },
     {
       title: 'وضعیت',
@@ -193,7 +194,7 @@ const VersionManagement: React.FC = () => {
       title: 'تاریخ ایجاد',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD HH:mm')
+      render: (date: string) => dateUtils.formatWithTime(date)
     },
     {
       title: 'عملیات',

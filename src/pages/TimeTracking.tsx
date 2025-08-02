@@ -13,7 +13,6 @@ import {
   Form, 
   Input, 
   Select, 
-  DatePicker, 
   Alert
 } from 'antd';
 import { 
@@ -32,10 +31,12 @@ import advancedQueriesService from '../services/advancedQueriesService';
 import { useAuth } from '../contexts/AuthContext';
 import NotificationService from '../utils/notifications';
 import { TimeLog as ImportedTimeLog } from '../types';
+import PersianDatePicker from '../components/PersianDatePicker';
+import PersianRangePicker from '../components/PersianRangePicker';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 interface ActiveTimer {
   id: number;
@@ -84,8 +85,8 @@ const TimeTracking: React.FC = () => {
     let interval: NodeJS.Timeout;
     if (activeTimer && activeTimer.is_active) {
       interval = setInterval(() => {
-        const now = dayjs();
-        const start = dayjs(activeTimer.start_time);
+        const now = (dayjs as any)();
+        const start = (dayjs as any)(activeTimer.start_time);
         setElapsedTime(now.diff(start, 'second'));
       }, 1000);
     }
@@ -105,8 +106,8 @@ const TimeTracking: React.FC = () => {
       const timer = await timeLogService.getActiveTimer();
       if (timer && timer.is_active) {
         setActiveTimer(timer);
-        const now = dayjs();
-        const start = dayjs(timer.start_time);
+        const now = (dayjs as any)();
+        const start = (dayjs as any)(timer.start_time);
         setElapsedTime(now.diff(start, 'second'));
       }
     } catch (error) {
@@ -230,7 +231,7 @@ const TimeTracking: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `time-logs-${dayjs().format('YYYY-MM-DD')}.csv`;
+      link.download = `time-logs-${dateUtils.toPersian(dateUtils.now())}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -254,7 +255,7 @@ const TimeTracking: React.FC = () => {
       title: 'تاریخ',
       dataIndex: 'date',
       key: 'date',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD')
+      render: (date: string) => dateUtils.toPersian(date)
     },
     {
       title: 'تسک',
@@ -285,13 +286,13 @@ const TimeTracking: React.FC = () => {
       title: 'زمان ثبت',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (created_at: string) => dayjs(created_at).format('YYYY/MM/DD HH:mm')
+      render: (created_at: string) => dateUtils.formatWithTime(created_at)
     }
   ];
 
   const totalHours = timeLogs.reduce((sum, log) => sum + log.hours, 0);
   const todayHours = timeLogs
-    .filter(log => dayjs(log.date).isSame(dayjs(), 'day'))
+    .filter(log => dateUtils.isToday(log.date))
     .reduce((sum, log) => sum + log.hours, 0);
 
   return (
@@ -399,15 +400,15 @@ const TimeTracking: React.FC = () => {
           <Card title="فیلترها">
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={8}>
-                <RangePicker
+                <PersianRangePicker
                   placeholder={['از تاریخ', 'تا تاریخ']}
                   style={{ width: '100%' }}
                   onChange={(dates) => {
-                    if (dates) {
+                    if (dates && dates[0] && dates[1]) {
                       setFilters({
                         ...filters,
-                        start_date: dates[0]?.format('YYYY-MM-DD') || '',
-                        end_date: dates[1]?.format('YYYY-MM-DD') || ''
+                        start_date: dateUtils.formatForAPI(dates[0]) || '',
+                        end_date: dateUtils.formatForAPI(dates[1]) || ''
                       });
                     } else {
                       setFilters({
@@ -559,9 +560,9 @@ const TimeTracking: React.FC = () => {
                 name="date"
                 label="تاریخ"
                 rules={[{ required: true, message: 'لطفاً تاریخ را انتخاب کنید' }]}
-                initialValue={dayjs()}
+                initialValue={dateUtils.now()}
               >
-                <DatePicker style={{ width: '100%' }} />
+                <PersianDatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>

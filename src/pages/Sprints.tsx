@@ -33,6 +33,7 @@ import ProjectService from '../services/projectService';
 import MilestoneService from '../services/milestoneService';
 import dayjs from 'dayjs';
 import { useAuth } from '../contexts/AuthContext';
+import { dateUtils } from '../utils/dateConfig';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -99,8 +100,8 @@ const Sprints: React.FC = () => {
         project_id: values.project_id,
         phase_id: values.phase_id || 0,
         milestone_id: values.milestone_id || null,
-        start_date: values.dateRange[0].toISOString(),
-        end_date: values.dateRange[1].toISOString(),
+        start_date: values.dateRange[0] || null,
+        end_date: values.dateRange[1] || null,
       };
       if (editingSprint) {
         await SprintService.updateSprint(editingSprint.id, sprintData);
@@ -127,7 +128,7 @@ const Sprints: React.FC = () => {
       estimated_hours: sprint.estimated_hours,
       project_id: sprint.project_id,
       milestone_id: sprint.milestone_id,
-      dateRange: [dayjs(sprint.start_date), dayjs(sprint.end_date)],
+      dateRange: [(dayjs as any)(sprint.start_date), (dayjs as any)(sprint.end_date)],
     });
     setModalVisible(true);
   };
@@ -150,8 +151,8 @@ const Sprints: React.FC = () => {
   };
 
   const getDaysRemaining = (endDate: string) => {
-    const end = dayjs(endDate);
-    const now = dayjs();
+    const end = (dayjs as any)(endDate);
+    const now = (dayjs as any)();
     const diff = end.diff(now, 'day');
     return diff > 0 ? diff : 0;
   };
@@ -220,7 +221,7 @@ const Sprints: React.FC = () => {
       title: 'تاریخ شروع',
       dataIndex: 'start_date',
       key: 'start_date',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+      render: (date: string) => dateUtils.toPersian(date),
     },
     {
       title: 'تاریخ پایان',
@@ -231,7 +232,7 @@ const Sprints: React.FC = () => {
         const isActive = record.status === SprintStatus.ACTIVE;
         return (
           <div>
-            <div>{dayjs(date).format('YYYY/MM/DD')}</div>
+            <div>{dateUtils.toPersian(date)}</div>
             {isActive && (
               <div style={{ 
                 fontSize: '12px', 

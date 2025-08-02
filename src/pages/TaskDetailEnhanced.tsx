@@ -55,9 +55,10 @@ import { useAuth } from '../contexts/AuthContext';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import 'dayjs/locale/fa';
+import { dateUtils } from '../utils/dateConfig';
 
-dayjs.extend(duration);
-dayjs.locale('fa');
+(dayjs as any).extend(duration);
+(dayjs as any).locale('fa');
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -297,7 +298,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
     editTimeLogForm.setFieldsValue({
       hours: timeLog.hours,
       description: timeLog.description,
-      date: dayjs(timeLog.date),
+      date: (dayjs as any)(timeLog.date),
     });
     setEditTimeLogModalVisible(true);
   };
@@ -312,7 +313,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
         priority: values.priority,
         story_points: values.story_points || 0,
         estimated_hours: values.estimated_hours || 0,
-        due_date: values.due_date ? values.due_date.toISOString() : null,
+        due_date: values.due_date || null,
         is_subtask: true,
         project_id: task.project_id,
         sprint_id: task.sprint_id,
@@ -336,7 +337,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
       priority: subtask.priority,
       story_points: subtask.story_points,
       estimated_hours: subtask.estimated_hours,
-      due_date: subtask.due_date ? dayjs(subtask.due_date) : null,
+      due_date: subtask.due_date ? (dayjs as any)(subtask.due_date) : null,
       assignee_id: subtask.assignee_id,
     });
     setEditSubtaskModalVisible(true);
@@ -348,7 +349,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
       await TaskService.updateTask(editingSubtask.id, {
         ...editingSubtask,
         ...values,
-        due_date: values.due_date ? values.due_date.toISOString() : null,
+        due_date: values.due_date || null,
       });
       setEditSubtaskModalVisible(false);
       setEditingSubtask(null);
@@ -433,7 +434,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
       title: 'تاریخ',
       dataIndex: 'date',
       key: 'date',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+      render: (date: string) => dateUtils.toPersian(date),
     },
     {
       title: 'کاربر',
@@ -607,7 +608,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
                     {task.story_points}
                   </Descriptions.Item>
                   <Descriptions.Item label="تاریخ انتشار">
-                    {task.due_date ? dayjs(task.due_date).format('YYYY/MM/DD') : 'تعیین نشده'}
+                    {task.due_date ? dateUtils.toPersian(task.due_date) : 'تعیین نشده'}
                   </Descriptions.Item>
                 </Descriptions>
               </Col>
@@ -829,7 +830,7 @@ const TaskDetailEnhanced: React.FC<TaskDetailEnhancedProps> = () => {
           layout="vertical"
           onFinish={handleAddTimeLog}
           initialValues={{
-            date: dayjs(),
+            date: (dayjs as any)(),
           }}
         >
           <Form.Item

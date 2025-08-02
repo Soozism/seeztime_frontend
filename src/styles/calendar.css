@@ -1,0 +1,75 @@
+:root {
+  /* Ensure variables are available when file is standalone import */
+  --color-primary: #006D77;
+  --color-secondary: #FF6F61;
+  --color-neutral: #F5F5EB;
+  --color-text: #333333;
+  --color-border: #A8B5A2;
+}
+
+/* ===== React Big Calendar Theme Overrides ===== */
+
+/* Toolbar */
+.rbc-toolbar {
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rbc-toolbar button {
+  font-family: 'Iranian Sans', 'IranianSans', 'Vazir', Arial, sans-serif;
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.rbc-toolbar button:hover,
+.rbc-toolbar button:focus {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Calendar grid */
+.rbc-month-view, .rbc-time-view {
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Today cell */
+.rbc-today {
+  background-color: rgba(0, 109, 119, 0.05);
+}
+
+/* Event cards */
+.rbc-event {
+  background-color: var(--color-secondary);
+  border: none;
+  border-radius: 6px;
+  padding: 2px 4px;
+  color: #fff;
+  font-size: 12px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.rbc-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Selection placeholder */
+.rbc-selected-cell {
+  background-color: rgba(255, 111, 97, 0.15) !important;
+}
+
+/* Time gutter */
+.rbc-time-gutter {
+  background-color: var(--color-neutral);
+} 

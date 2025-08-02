@@ -1,0 +1,83 @@
+:root {
+  --fc-event-bg-color: var(--color-secondary);
+  --fc-event-border-color: var(--color-secondary);
+  --fc-today-bg-color: rgba(0,109,119,0.08);
+}
+
+/* Toolbar */
+.fc .fc-toolbar.fc-header-toolbar {
+  background-color: var(--color-primary);
+  padding: 4px 8px;
+  border-radius: 6px 6px 0 0;
+  color: #fff;
+}
+.fc .fc-toolbar-title {
+  font-size: 16px;
+  color: #fff;
+}
+.fc .fc-button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+.fc .fc-button:hover {
+  background: rgba(255,255,255,0.15);
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+/* Today highlight */
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: var(--fc-today-bg-color);
+}
+
+/* Event styling */
+.fc-event {
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.fc-daygrid-day-frame {
+  min-height: 80px;
+}
+
+@media (max-width: 576px) {
+  .fc {
+    font-size: 12px;
+  }
+} 
+
+.fc .fc-button .fc-icon {
+  font-size: 16px;
+  color: #fff;
+}
+
+/* Event title font */
+.fc .fc-event-title {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* ListWeek font */
+.fc-list-event-title {
+  font-size: 14px;
+} 
+
+/* Prev/Next button text */
+.fc-prev-button::after {
+  content: ' قبلی';
+  margin-right: 4px;
+  font-size: 13px;
+}
+.fc-next-button::after {
+  content: ' بعدی';
+  margin-left: 4px;
+  font-size: 13px;
+} 

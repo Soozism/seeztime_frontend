@@ -8,7 +8,6 @@ import {
   Modal,
   Form,
   Input,
-  DatePicker,
   message,
   Popconfirm,
   Typography,
@@ -51,6 +50,9 @@ import UserService from '../services/userService';
 import ProjectService from '../services/projectService';
 import { useAuth } from '../contexts/AuthContext';
 import dayjs from 'dayjs';
+import PersianDatePicker from '../components/PersianDatePicker';
+import PersianRangePicker from '../components/PersianRangePicker';
+import { dateUtils } from '../utils/dateConfig';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -80,7 +82,6 @@ ChartJS.register(
 
 const { Title } = Typography;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 interface TimeLogFilters {
   project_id?: number;
@@ -111,7 +112,7 @@ const TimeLogs: React.FC = () => {
     skip: 0,
     limit: 100,
   });
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
+  const [dateRange, setDateRange] = useState<[string | null, string | null] | null>(null);
   const [quickFilter, setQuickFilter] = useState<string>('all'); // all, today, week, month
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
@@ -166,7 +167,7 @@ const TimeLogs: React.FC = () => {
       
       // Apply quick filters
       if (quickFilter !== 'all') {
-        const now = dayjs();
+        const now = (dayjs as any)();
         switch (quickFilter) {
           case 'today':
             timeLogFilters.start_date = now.startOf('day').toISOString();
@@ -185,8 +186,8 @@ const TimeLogs: React.FC = () => {
       
       // Apply custom date range
       if (dateRange && dateRange[0] && dateRange[1]) {
-        timeLogFilters.start_date = dateRange[0].startOf('day').toISOString();
-        timeLogFilters.end_date = dateRange[1].endOf('day').toISOString();
+        timeLogFilters.start_date = dateRange[0];
+        timeLogFilters.end_date = dateRange[1];
       }
       
       const timeLogsData = await TimeLogService.getTimeLogs(timeLogFilters);
@@ -275,19 +276,19 @@ const TimeLogs: React.FC = () => {
 
   const getDailyTimeLogsChart = useMemo(() => {
     const dailyStats = timeLogs.reduce((acc, log) => {
-      const date = dayjs(log.date).format('YYYY-MM-DD');
+      const date = (dayjs as any)(log.date).format('YYYY-MM-DD');
       if (!acc[date]) {
         acc[date] = 0;
       }
       acc[date] += log.hours;
       return acc;
-    }, {} as { [key: string]: number });
+    }, {} as Record<string, number>);
 
     const sortedDates = Object.keys(dailyStats).sort();
     const last7Days = sortedDates.slice(-7);
 
     return {
-      labels: last7Days.map(date => dayjs(date).format('MMM DD')),
+      labels: last7Days.map(date => dateUtils.toPersian(date)),
       datasets: [
         {
           label: 'ساعت کار',
@@ -326,7 +327,7 @@ const TimeLogs: React.FC = () => {
       const task = tasks.find(t => t.id === log.task_id);
       const user = users.find(u => u.id === log.user_id);
       return [
-        dayjs(log.date).format('YYYY/MM/DD'),
+        dateUtils.toPersian(log.date),
         `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || user?.username || '',
         task?.title || '',
         task?.project?.name || '',
@@ -342,7 +343,7 @@ const TimeLogs: React.FC = () => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `time-logs-${dayjs().format('YYYY-MM-DD')}.csv`;
+    link.download = `time-logs-${dateUtils.toPersian(dateUtils.now())}.csv`;
     link.click();
   };
 
@@ -363,7 +364,7 @@ const TimeLogs: React.FC = () => {
       const logParams = {
         description: values.description,
         duration_minutes: Math.round(values.hours * 60),
-        log_date: values.date.toISOString(),
+        log_date: values.date || null,
         task_id: values.task_id,
         is_manual: true,
       };
@@ -371,7 +372,7 @@ const TimeLogs: React.FC = () => {
         await TimeLogService.updateTimeLog(editingTimeLog.id, {
           hours: values.hours,
           description: values.description,
-          date: values.date.toISOString(),
+          date: values.date || null,
         });
         message.success('لاگ زمانی با موفقیت به‌روزرسانی شد');
       } else {
@@ -393,7 +394,7 @@ const TimeLogs: React.FC = () => {
     form.setFieldsValue({
       description: timeLog.description,
       hours: timeLog.hours,
-      date: dayjs(timeLog.date),
+      date: dateUtils.toPersianDayjs(timeLog.date),
       task_id: timeLog.task?.id,
     });
     setModalVisible(true);
@@ -480,7 +481,7 @@ const TimeLogs: React.FC = () => {
       title: 'تاریخ',
       dataIndex: 'date',
       key: 'date',
-      render: (date: string) => dayjs(date).format('YYYY/MM/DD'),
+      render: (date: string) => dateUtils.toPersian(date),
     },
     {
       title: 'کاربر',
@@ -744,10 +745,9 @@ const TimeLogs: React.FC = () => {
             </Select>
 
             {/* Date Range Picker */}
-            <RangePicker
+            <PersianRangePicker
               value={dateRange}
               onChange={setDateRange}
-              format="YYYY/MM/DD"
               placeholder={['از تاریخ', 'تا تاریخ']}
               style={{ width: 240 }}
             />
@@ -845,7 +845,7 @@ const TimeLogs: React.FC = () => {
                     <strong>پروژه:</strong> {record.task?.project?.name || 'نامشخص'}
                   </Col>
                   <Col span={12}>
-                    <strong>تاریخ ایجاد:</strong> {dayjs(record.created_at).format('YYYY/MM/DD HH:mm')}
+                    <strong>تاریخ ایجاد:</strong> {dateUtils.formatWithTime(record.created_at)}
                   </Col>
                 </Row>
                 {!activeTimer && record.user_id === currentUser?.id && (
@@ -937,10 +937,9 @@ const TimeLogs: React.FC = () => {
             label="تاریخ"
             rules={[{ required: true, message: 'انتخاب تاریخ الزامی است' }]}
           >
-            <DatePicker
+            <PersianDatePicker
               style={{ width: '100%' }}
               placeholder="تاریخ انجام کار"
-              format="YYYY/MM/DD"
             />
           </Form.Item>
 
@@ -968,10 +967,9 @@ const TimeLogs: React.FC = () => {
         <Space direction="vertical" style={{ width: '100%' }} size="large">
           <div>
             <Title level={5}>فیلتر بر اساس تاریخ</Title>
-            <RangePicker
+            <PersianRangePicker
               value={dateRange}
               onChange={setDateRange}
-              format="YYYY/MM/DD"
               placeholder={['از تاریخ', 'تا تاریخ']}
               style={{ width: '100%' }}
             />

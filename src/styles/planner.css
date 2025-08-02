@@ -1,0 +1,983 @@
+/* Planner Custom Styles - Google Calendar Style */
+.planner-container {
+  background: #fafafa;
+  min-height: 100vh;
+  padding: 8px;
+  font-family: 'Google Sans', 'Roboto', 'Iranian Sans', sans-serif;
+}
+
+/* Google Calendar-like container */
+.planner-container .ant-row {
+  margin: 0 !important;
+}
+
+.planner-container .ant-col {
+  padding: 0 4px !important;
+}
+
+.planner-card {
+  border-radius: 4px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e8eaed !important;
+  background: white !important;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.planner-card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Main calendar card - Google Calendar style */
+.planner-card:has(.rbc-calendar) {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Calendar Customization - Google Calendar Style */
+.rbc-calendar {
+  font-family: 'Google Sans', 'Roboto', 'Iranian Sans', sans-serif;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  background: white;
+  border: 1px solid #e8eaed;
+  font-size: 13px;
+}
+
+.rbc-header {
+  background: #f8f9fa;
+  color: #5f6368;
+  font-weight: 500;
+  padding: 6px 2px;
+  border: none;
+  text-align: right;
+  border-bottom: 1px solid #e8eaed;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  height: 32px;
+  line-height: 20px;
+}
+
+.rbc-month-view {
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.rbc-month-row {
+  min-height: 120px;
+}
+
+.rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #e8eaed;
+}
+
+.rbc-day-bg {
+  border-right: 1px solid #f1f3f4;
+}
+
+.rbc-day-bg:last-child {
+  border-right: none;
+}
+
+.rbc-month-row {
+  border: none;
+}
+
+.rbc-date-cell {
+  padding: 2px;
+  font-weight: 400;
+  color: #3c4043;
+  font-size: 12px;
+  text-align: right;
+  height: 32px;
+  line-height: 28px;
+  min-width: 120px;
+}
+
+.rbc-off-range-bg {
+  background-color: #f8f9fa;
+}
+
+.rbc-off-range {
+  color: #adb5bd;
+}
+
+.rbc-today {
+  background: #e8f0fe !important;
+  border-radius: 50%;
+  margin: 1px;
+  font-weight: 500;
+  color: #1a73e8;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  line-height: 24px;
+}
+
+/* Google Calendar Event Styles */
+.rbc-event {
+  border-radius: 2px !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.15s ease !important;
+  font-weight: 400 !important;
+  padding: 2px 4px !important;
+  font-size: 11px !important;
+  cursor: pointer !important;
+  position: relative !important;
+  min-height: 16px !important;
+  line-height: 1.2 !important;
+  margin: 1px 2px 1px 2px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+}
+
+.rbc-event:hover {
+  transform: scale(1.01) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  z-index: 10 !important;
+  opacity: 0.9 !important;
+}
+
+.rbc-event-content {
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}
+
+/* Google Calendar Event Wrapper */
+.google-calendar-event-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.google-calendar-event-wrapper.hovered {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  z-index: 10;
+}
+
+/* Resize Handles - Google Calendar Style */
+.event-resize-handle {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: ns-resize;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.event-resize-handle-start {
+  left: 0;
+  top: 0;
+  cursor: n-resize;
+}
+
+.event-resize-handle-end {
+  right: 0;
+  bottom: 0;
+  cursor: s-resize;
+}
+
+.google-calendar-event-wrapper:hover .event-resize-handle {
+  opacity: 1;
+}
+
+.event-resize-handle:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Drag Handle - Google Calendar Style */
+.event-drag-handle {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+
+.google-calendar-event-wrapper:hover .event-drag-handle {
+  opacity: 1;
+}
+
+.event-drag-handle:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Time Range Selection - Google Calendar Style */
+.rbc-slot-selecting {
+  background: rgba(66, 133, 244, 0.1) !important;
+  border: 2px dashed #4285f4 !important;
+  border-radius: 4px;
+  position: relative;
+}
+
+.rbc-slot-selecting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(66, 133, 244, 0.1) 50%, transparent 70%);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Drag Selection Visual Feedback */
+.rbc-slot-selecting .rbc-event {
+  background: rgba(66, 133, 244, 0.2) !important;
+  border: 2px solid #4285f4 !important;
+  color: #4285f4 !important;
+  font-weight: 600 !important;
+}
+
+/* Time Slot Hover Effects */
+.rbc-time-slot:hover {
+  background: rgba(66, 133, 244, 0.05) !important;
+  cursor: crosshair;
+}
+
+.rbc-time-slot.rbc-slot-selecting {
+  background: rgba(66, 133, 244, 0.1) !important;
+  border: 1px solid #4285f4 !important;
+}
+
+/* Week and Day View Enhancements */
+.rbc-time-view {
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid #e8eaed;
+}
+
+.rbc-time-view .rbc-event {
+  border-radius: 2px !important;
+  border-left: 3px solid currentColor !important;
+  margin: 0 1px 1px 1px !important;
+  padding: 1px 4px !important;
+  font-size: 11px !important;
+  min-height: 16px !important;
+  line-height: 1.2 !important;
+  background: currentColor !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.rbc-time-header {
+  background: #f8f9fa;
+  color: #5f6368;
+  border-radius: 0;
+  border-bottom: 1px solid #e8eaed;
+  font-size: 12px;
+}
+
+.rbc-time-content {
+  border-radius: 0;
+}
+
+.rbc-time-slot {
+  border-color: #f1f3f4;
+  position: relative;
+  min-height: 20px;
+}
+
+.rbc-time-gutter {
+  background: #f8f9fa;
+  border-right: 1px solid #e8eaed;
+  font-size: 11px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+/* Toolbar Customization */
+.rbc-toolbar {
+  background: white;
+  padding: 8px 16px;
+  border-radius: 0;
+  border: none;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+}
+
+.rbc-toolbar button {
+  border-radius: 3px !important;
+  border: 1px solid #dadce0 !important;
+  background: white !important;
+  color: #5f6368 !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  margin: 0 1px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  min-width: 50px !important;
+  height: 32px !important;
+  line-height: 1 !important;
+}
+
+.rbc-toolbar button:hover {
+  background: #f8f9fa !important;
+  color: #3c4043 !important;
+  border-color: #dadce0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.rbc-toolbar button.rbc-active {
+  background: #1a73e8 !important;
+  color: white !important;
+  border-color: #1a73e8 !important;
+  box-shadow: 0 1px 2px rgba(26, 115, 232, 0.3) !important;
+}
+
+.rbc-toolbar-label {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  color: #3c4043 !important;
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+  margin: 0 8px !important;
+}
+
+/* Event Type Colors - Google Calendar Style */
+.event-meeting {
+  background: #1a73e8 !important;
+  color: white !important;
+}
+
+.event-hobby {
+  background: #34a853 !important;
+  color: white !important;
+}
+
+.event-work {
+  background: #f9ab00 !important;
+  color: white !important;
+}
+
+.event-personal {
+  background: #d93025 !important;
+  color: white !important;
+}
+
+.event-health {
+  background: #ea4335 !important;
+  color: white !important;
+}
+
+.event-education {
+  background: #46bdc6 !important;
+  color: white !important;
+}
+
+.event-travel {
+  background: #4285f4 !important;
+  color: white !important;
+}
+
+.event-birthday {
+  background: #f28b82 !important;
+  color: white !important;
+}
+
+/* Mini Calendar Styles */
+.mini-calendar-date {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.mini-calendar-event {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  height: 3px;
+  border-radius: 1px;
+}
+
+/* Event Details Drawer */
+.event-details-drawer .ant-drawer-content {
+  background: white;
+}
+
+.event-details-drawer .ant-drawer-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.event-details-drawer .ant-drawer-title {
+  color: #333;
+  font-weight: 600;
+}
+
+.event-details-drawer .ant-drawer-close {
+  color: #666;
+}
+
+/* Modal Customization - Google Calendar Style */
+.planner-modal .ant-modal-content {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e8eaed;
+}
+
+.planner-modal .ant-modal-header {
+  border-radius: 8px 8px 0 0;
+  background: white;
+  border-bottom: 1px solid #e8eaed;
+  padding: 16px 24px;
+}
+
+.planner-modal .ant-modal-title {
+  color: #333;
+  font-weight: 600;
+}
+
+.planner-modal .ant-modal-close {
+  color: #666;
+}
+
+.planner-modal .ant-modal-close:hover {
+  color: #333;
+}
+
+/* Drawer Customization */
+.planner-drawer .ant-drawer-content {
+  background: white;
+}
+
+.planner-drawer .ant-drawer-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.planner-drawer .ant-drawer-title {
+  color: #333;
+  font-weight: 600;
+}
+
+.planner-drawer .ant-drawer-close {
+  color: #666;
+}
+
+/* Todo List Customization */
+.todo-list-item {
+  background: white;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  border: 1px solid #f1f3f4;
+  padding: 8px 12px;
+}
+
+.todo-list-item:hover {
+  transform: translateX(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: #1a73e8;
+  background: #f8f9fa;
+}
+
+.todo-completed {
+  background: #f6ffed;
+  border-color: #34a853;
+  opacity: 0.8;
+}
+
+.todo-completed .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #34a853;
+  border-color: #34a853;
+}
+
+/* Button Customization - Google Calendar Style */
+.planner-btn-primary {
+  background: #1a73e8;
+  border: none;
+  border-radius: 3px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(26, 115, 232, 0.3);
+  color: white;
+  font-size: 13px;
+  padding: 6px 12px;
+  height: 32px;
+  line-height: 1;
+}
+
+.planner-btn-primary:hover {
+  background: #1557b0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(26, 115, 232, 0.4);
+  color: white;
+}
+
+/* Secondary button style */
+.planner-btn-secondary {
+  background: white;
+  border: 1px solid #dadce0;
+  color: #5f6368;
+  border-radius: 3px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  padding: 6px 12px;
+  height: 32px;
+  line-height: 1;
+}
+
+.planner-btn-secondary:hover {
+  background: #f8f9fa;
+  border-color: #dadce0;
+  color: #3c4043;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Form Customization - Google Calendar Style */
+.planner-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #3c4043;
+  font-size: 14px;
+}
+
+.planner-form .ant-input,
+.planner-form .ant-select-selector,
+.planner-form .ant-picker {
+  border-radius: 4px;
+  border: 1px solid #dadce0;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.planner-form .ant-input:focus,
+.planner-form .ant-select-focused .ant-select-selector,
+.planner-form .ant-picker-focused {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+/* Badge Customization */
+.planner-badge .ant-badge-count {
+  background: #1a73e8;
+  box-shadow: 0 1px 2px rgba(26, 115, 232, 0.3);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Loading Spinner */
+.planner-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Quick Add Styles */
+.quick-add-input {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.2s ease;
+}
+
+.quick-add-input:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+/* Search Input Styles */
+.ant-input-affix-wrapper {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.2s ease;
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+/* Dropdown Menu Styles */
+.ant-dropdown-menu {
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e9ecef;
+}
+
+.ant-dropdown-menu-item {
+  transition: all 0.2s ease;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: #f8f9fa;
+}
+
+/* Alert Styles */
+.ant-alert {
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .planner-container {
+    padding: 16px;
+  }
+  
+  .rbc-toolbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .rbc-toolbar button {
+    margin: 2px;
+  }
+  
+  .planner-card .ant-card-extra {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .planner-card .ant-card-extra .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .planner-card .ant-card-extra .ant-input {
+    width: 100% !important;
+  }
+  
+  /* Mobile drag and drop adjustments */
+  .event-resize-handle {
+    width: 8px; /* Larger touch targets on mobile */
+  }
+  
+  .event-drag-handle {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Custom Scrollbar */
+.planner-drawer .ant-drawer-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.planner-drawer .ant-drawer-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.planner-drawer .ant-drawer-body::-webkit-scrollbar-thumb {
+  background: #4285f4;
+  border-radius: 3px;
+}
+
+.planner-drawer .ant-drawer-body::-webkit-scrollbar-thumb:hover {
+  background: #3367d6;
+}
+
+/* Tag Styles */
+.ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Space Component Adjustments */
+.ant-space-vertical > .ant-space-item {
+  margin-bottom: 8px;
+}
+
+/* Typography Adjustments */
+.ant-typography h5 {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.ant-typography h3 {
+  color: #333;
+}
+
+/* Divider Styles */
+.ant-divider {
+  margin: 16px 0;
+  border-color: #e9ecef;
+}
+
+/* Empty State Styles */
+.ant-empty {
+  color: #999;
+}
+
+.ant-empty-description {
+  color: #999;
+}
+
+/* Checkbox Styles */
+.ant-checkbox-wrapper {
+  color: #333;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #4285f4;
+  border-color: #4285f4;
+}
+
+/* List Styles */
+.ant-list-item-meta-title {
+  color: #333;
+  font-weight: 500;
+}
+
+.ant-list-item-meta-description {
+  color: #666;
+}
+
+/* Card Header Styles */
+.ant-card-head {
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.ant-card-head-title {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Tabs Styles */
+.ant-tabs-tab {
+  color: #666;
+  font-weight: 500;
+}
+
+.ant-tabs-tab-active {
+  color: #4285f4;
+}
+
+.ant-tabs-ink-bar {
+  background: #4285f4;
+}
+
+/* Tooltip Styles */
+.ant-tooltip-inner {
+  background: #333;
+  border-radius: 4px;
+}
+
+/* Popconfirm Styles */
+.ant-popover-inner {
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Ant Calendar Mini Styles */
+.ant-picker-calendar-mini {
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+
+.ant-picker-calendar-mini .ant-picker-calendar-date {
+  border-radius: 4px;
+}
+
+.ant-picker-calendar-mini .ant-picker-calendar-date-today {
+  background: #e3f2fd;
+}
+
+.ant-picker-calendar-mini .ant-picker-calendar-date-value {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Google Calendar Specific Enhancements */
+.rbc-time-view .rbc-event {
+  border-left: 3px solid currentColor !important;
+  border-right: 3px solid currentColor !important;
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+}
+
+.rbc-time-view .rbc-event:hover {
+  border-left-width: 4px !important;
+  border-right-width: 4px !important;
+  margin-left: 1px !important;
+  margin-right: 1px !important;
+}
+
+/* Drag Selection Visual Feedback */
+.rbc-slot-selecting .rbc-time-slot {
+  background: rgba(66, 133, 244, 0.1) !important;
+  border: 1px dashed #4285f4 !important;
+}
+
+/* Event Creation Preview */
+.rbc-event.rbc-event-creating {
+  opacity: 0.7;
+  border: 2px dashed #4285f4 !important;
+  background: rgba(66, 133, 244, 0.1) !important;
+  color: #4285f4 !important;
+}
+
+/* Resize Cursor Indicators */
+.rbc-event.rbc-event-resizing {
+  opacity: 0.8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.rbc-event.rbc-event-resizing .event-resize-handle {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+/* Drag and Drop Visual Feedback */
+.rbc-event.rbc-event-dragging {
+  opacity: 0.6;
+  transform: rotate(2deg) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Time Slot Grid Enhancement */
+.rbc-time-view .rbc-time-gutter {
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.rbc-time-view .rbc-time-slot {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.rbc-time-view .rbc-time-slot:hover {
+  background: rgba(66, 133, 244, 0.05);
+}
+
+/* Event Overlap Handling */
+.rbc-event.rbc-event-overlapping {
+  margin-left: 1px !important;
+  margin-right: 1px !important;
+  width: calc(100% - 2px) !important;
+}
+
+/* Mobile Touch Enhancements */
+@media (max-width: 768px) {
+  .rbc-event {
+    min-height: 24px !important;
+    padding: 4px 8px !important;
+  }
+  
+  .event-resize-handle {
+    width: 12px !important;
+  }
+  
+  .event-drag-handle {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .rbc-time-slot {
+    min-height: 30px !important;
+  }
+} 
+
+/* Floating Action Button */
+.planner-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  background-color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
+  z-index: 1100;
+}
+
+.planner-fab:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+} 
+
+@media (max-width: 576px) {
+  .planner-fab {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .planner-card {
+    margin-bottom: 12px;
+  }
+
+  .planner-drawer {
+    max-width: 100% !important;
+  }
+
+  .event-details-drawer {
+    max-width: 100% !important;
+  }
+} 

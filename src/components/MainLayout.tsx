@@ -27,6 +27,7 @@ import {
   BarsOutlined,
   LogoutOutlined,
   SettingOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -38,7 +39,7 @@ const { useBreakpoint } = Grid;
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerVisible, setMobileDrawerVisible] = useState(false);
-  const { user, logout, canManageUsers, canManageProjects, canManageTeams, canViewReports } = useAuth();
+  const { user, logout, canManageUsers, canManageTeams, canViewReports, hasRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const screens = useBreakpoint();
@@ -97,6 +98,26 @@ const MainLayout: React.FC = () => {
       icon: <ClockCircleOutlined />,
       label: 'ثبت زمان',
     },
+    ...(hasRole(['admin', 'project_manager']) ? [{
+      key: '/working-hours',
+      icon: <ClockCircleOutlined />,
+      label: 'ساعات کاری',
+    }] : []),
+    ...(hasRole(['admin', 'project_manager']) ? [{
+      key: '/holidays',
+      icon: <CalendarOutlined />,
+      label: 'تعطیلات',
+    }] : []),
+    {
+      key: '/time-off',
+      icon: <ClockCircleOutlined />,
+      label: 'مرخصی',
+    },
+    {
+      key: '/my-calendar',
+      icon: <CalendarOutlined />,
+      label: 'تقویم شخصی',
+    },
     {
       key: '/milestones',
       icon: <FlagOutlined />,
@@ -106,6 +127,11 @@ const MainLayout: React.FC = () => {
       key: '/kanban',
       icon: <BarsOutlined />,
       label: 'کانبان',
+    },
+    {
+      key: '/planner',
+      icon: <ScheduleOutlined />,
+      label: 'برنامه‌ریز شخصی',
     },
     ...(canViewReports() ? [{
       key: '/reports',

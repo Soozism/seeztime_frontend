@@ -9,31 +9,25 @@ body {
 @font-face {
   font-family: 'Iranian Sans';
   src: url('./fonts/iranian-sans/Iranian Sans.ttf') format('truetype');
-  font-weight: 10000;
+  font-weight: 300;
   font-style: normal;
 }
 @font-face {
   font-family: 'Iranian Sans';
   src: url('./fonts/iranian-sans/Iranian Sans.ttf') format('truetype');
-  font-weight: 10000;
+  font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'Iranian Sans';
   src: url('./fonts/iranian-sans/Iranian Sans.ttf') format('truetype');
-  font-weight: 10000;
+  font-weight: 500;
   font-style: normal;
 }
 @font-face {
   font-family: 'Iranian Sans';
   src: url('./fonts/iranian-sans/Iranian Sans.ttf') format('truetype');
-  font-weight: 10000;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Iranian Sans';
-  src: url('./fonts/iranian-sans/Iranian Sans.ttf') format('truetype');
-  font-weight: 10000;
+  font-weight: 700;
   font-style: normal;
 }
 
